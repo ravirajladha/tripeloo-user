@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ✅ Scope styles to SectionDateRange only */
+.availability-datepicker-wrapper .react-datepicker {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* ✅ Stack two months vertically */
+.availability-datepicker-wrapper .react-datepicker__month-container {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* ✅ Ensure Date Cells Have Enough Space */
+.availability-datepicker-wrapper .react-datepicker__day {
+    min-height: 80px !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.85rem !important;
+    background-color: #fff !important;
+    color: #000 !important;
+    border: 1px solid #aeaeae !important;
+    border-radius: 0.3rem !important;
+    text-align: center !important;
+    white-space: normal !important; /* Prevents overflow */
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* ✅ Ensure Proper Text Size Inside Date Cells */
+.availability-datepicker-wrapper .availability-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 90px;  /* Increased height to fit text */
+    font-size: 12px;
+    line-height: 1.4;  /* Better text spacing */
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* ✅ Fix Day Number */
+.availability-datepicker-wrapper .availability-day .day-number {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* ✅ Fix Special Price and Rooms */
+.availability-datepicker-wrapper .availability-day .special-price {
+    font-size: 11px;
+    font-weight: 600;
+    color: green;
+    margin-top: 3px;
+}
+
+.availability-datepicker-wrapper .availability-day .special-rooms {
+    font-size: 10px;
+    color: gray;
+    margin-top: 1px;
+}
+
+/* ✅ Fix Default Price and Rooms */
+.availability-datepicker-wrapper .availability-day .default-price {
+    font-size: 11px;
+    font-weight: 600;
+    color: blue;
+    margin-top: 3px;
+}
+
+.availability-datepicker-wrapper .availability-day .default-rooms {
+    font-size: 10px;
+    color: gray;
+    margin-top: 1px;
+}
+
+/* ✅ Remove Hover Effect */
+.availability-datepicker-wrapper .react-datepicker__day:hover {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+/* ✅ Remove Selected Day Background */
+.availability-datepicker-wrapper .react-datepicker__day--selected,
+.availability-datepicker-wrapper .react-datepicker__day--range-start,
+.availability-datepicker-wrapper .react-datepicker__day--range-end,
+.availability-datepicker-wrapper .react-datepicker__day--selecting-range-start,
+.availability-datepicker-wrapper .react-datepicker__day--selecting-range-end {
+    background-color: transparent !important;
+    color: inherit !important;
+    border-radius: 0 !important;
+}
+
+/* ✅ Disable Past Dates */
+.availability-datepicker-wrapper .react-datepicker__day--disabled {
+    color: #ccc !important;
+    pointer-events: none !important;
+    text-decoration: line-through !important;
+}
+
+
+
+/* ✅ Ensure StayDatesRangeInput takes full width */
+.stay-datepicker-wrapper .react-datepicker {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* ✅ Stack two months vertically */
+.stay-datepicker-wrapper .react-datepicker__month-container {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* ✅ Ensure Date Cells Have Enough Space */
+.stay-datepicker-wrapper .react-datepicker__day {
+    min-height: 50px !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.85rem !important;
+    background-color: #fff !important;
+    color: #000 !important;
+    border: 1px solid #aeaeae !important;
+    border-radius: 0.3rem !important;
+    text-align: center !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* ✅ Remove Hover & Selection Effect */
+.stay-datepicker-wrapper .react-datepicker__day--selected,
+.stay-datepicker-wrapper .react-datepicker__day--range-start,
+.stay-datepicker-wrapper .react-datepicker__day--range-end,
+.stay-datepicker-wrapper .react-datepicker__day--selecting-range-start,
+.stay-datepicker-wrapper .react-datepicker__day--selecting-range-end {
+    background-color: transparent !important;
+    color: inherit !important;
+    border-radius: 0 !important;
+}
+
+/* ✅ Fix Scrolling */
+.stay-datepicker-wrapper {
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+/* ✅ Remove blue hover effect */
+.stay-datepicker-wrapper .react-datepicker__day:hover {
+    background-color: transparent !important;
+    color: inherit !important;
+}
