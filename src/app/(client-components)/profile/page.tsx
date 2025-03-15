@@ -1,6 +1,6 @@
 'use client'
 
-import getUserDetails from '@/actions/getUSerDetails'
+import getUserDetails from '@/actions/getUserDetails'
 import Avatar from '@/shared/Avatar'
 import ButtonSecondary from '@/shared/ButtonSecondary'
 import Comment from '@/shared/Comment'

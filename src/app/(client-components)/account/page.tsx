@@ -8,7 +8,7 @@ import Input from '@/shared/Input'
 import Select from '@/shared/Select'
 import Textarea from '@/shared/Textarea'
 import axios from 'axios'
-import getUserDetails from '@/actions/getUSerDetails'
+import getUserDetails from '@/actions/getUserDetails'
 import checkAuth from '@/actions/checkAuth'
 import { useRouter } from 'next/navigation'
 
