@@ -1,10 +1,12 @@
 import axiosInstance from "@/utils/axios";
 
-const token = localStorage.getItem("accessToken"); // ✅ Get token from localStorage
-
 // ✅ Fetch chat messages for a specific booking
 export const fetchChatMessages = async (bookingId: string) => {
   try {
+    if (typeof window === "undefined") return []; // ✅ Prevents SSR error
+
+    const token = localStorage.getItem("accessToken"); // ✅ Get token inside function
+
     const response = await axiosInstance.get(`/api/v1/chat/booking/${bookingId}`, {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true, // ✅ Ensure credentials are included
@@ -20,6 +22,10 @@ export const fetchChatMessages = async (bookingId: string) => {
 // ✅ Send a message in the chat
 export const sendMessage = async (bookingId: string, senderId: string, receiverId: string, message: string) => {
   try {
+    if (typeof window === "undefined") return null; // ✅ Prevent SSR errors
+
+    const token = localStorage.getItem("accessToken"); // ✅ Get token inside function
+
     const response = await axiosInstance.post(
       `/api/v1/chat/booking/${bookingId}/send`,
       { sender_id: senderId, receiver_id: receiverId, message },
@@ -33,9 +39,13 @@ export const sendMessage = async (bookingId: string, senderId: string, receiverI
   }
 };
 
-
+// ✅ Mark messages as read
 export const markMessagesAsRead = async (bookingId: string, userId: string) => {
   try {
+    if (typeof window === "undefined") return null; // ✅ Prevent SSR errors
+
+    const token = localStorage.getItem("accessToken"); // ✅ Get token inside function
+
     const response = await axiosInstance.put(
       `/api/v1/chat/booking/${bookingId}/read`,
       { userId },
