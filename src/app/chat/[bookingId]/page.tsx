@@ -36,49 +36,39 @@ interface ChatUser {
     // Add other properties if needed
 }
 
-
-
 const ChatPage = () => {
     const { bookingId } = useParams(); // ✅ Get booking ID from URL
     const user = useAppSelector((state) => state.auth.user); // ✅ Fetch user from Redux store
     const router = useRouter();
 
+    // ✅ Hooks must be at the top (before any return)
     const [messages, setMessages] = useState<Message[]>([]);
     const [chatUser, setChatUser] = useState<ChatUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const messagesEndRef = useRef(null);
 
-  // ✅ Redirect if user is not logged in (useEffect instead of early return)
-  useEffect(() => {
-    if (!user || !user._id) {
-      alert("Please log in to proceed with booking.");
-      router.push("/login");
-    }
-  }, [user, router]);
 
+    // ✅ Redirect if user is not logged in (useEffect instead of early return)
+    useEffect(() => {
+        if (!user || !user._id) {
+            alert("Please log in to proceed with booking.");
+            router.push("/login");
+        }
+    }, [user, router]);
 
- 
-
-
-    // ✅ Ensure UI doesn't break while redirecting
-  if (!user) {
-    return <p>Redirecting...</p>;
-  }
-
-    // ✅ Fetch messages for this booking
-
+    // ✅ Use `useCallback` to stabilize `fetchChat`
     const fetchChat = useCallback(async () => {
         if (!bookingId) return;
-    
+
         try {
             console.log("🔍 Fetching chat for booking ID:", bookingId);
             const data = await fetchChatMessages(bookingId as string);
-    
+
             if (!Array.isArray(data.messages)) {
                 console.error("❌ Invalid messages format received:", data.messages);
                 return;
             }
-    
+
             setMessages(
                 data.messages.map((msg: any) => ({
                     _id: msg._id,
@@ -90,44 +80,41 @@ const ChatPage = () => {
                     read: msg.read,
                 }))
             );
-    
+
             setChatUser(data.user || null);
             setIsLoading(false);
-    
-            const unreadMessages = data.messages.some(
-                (msg: ChatMessage) =>
-                    !msg.read &&
-                    typeof msg.receiver_id === "object" &&
-                    msg.receiver_id._id === user._id
-            );
-    
-            if (unreadMessages) {
-                await markMessagesAsRead(bookingId as string, user._id);
-            }
+
+            // const unreadMessages = data.messages.some(
+            //     (msg: ChatMessage) =>
+            //         !msg.read &&
+            //         typeof msg.receiver_id === "object" &&
+            //         msg.receiver_id._id === user._id
+            // );
+
+            // if (unreadMessages) {
+            //     await markMessagesAsRead(bookingId as string, user._id);
+            // }
         } catch (error) {
             console.error("❌ Error fetching chat:", error);
             setIsLoading(false);
         }
-    }, [bookingId, user?._id]); // ✅ Includes dependencies
-    
+    }, [bookingId, user?._id]); // ✅ Ensure dependencies are correct
+
+    // ✅ Fetch messages automatically
     useEffect(() => {
         let intervalId: NodeJS.Timeout;
-    
+
         fetchChat(); // ✅ Fetch once immediately
-    
+
         intervalId = setInterval(() => {
             fetchChat();
         }, 50000); // ✅ Fetch every 50 seconds
-    
-        return () => clearInterval(intervalId); // ✅ Cleanup on component unmount
-    }, [bookingId, fetchChat]); // ✅ No more missing dependencies
-    
-    
-    // ✅ Runs only when these values change
 
+        return () => clearInterval(intervalId); // ✅ Cleanup on unmount
+    }, [bookingId, fetchChat]); // ✅ Ensure dependencies are correct
 
     // ✅ Send a new message
-    const handleSendMessage = async (textMessage: string) => {
+    const handleSendMessage = useCallback(async (textMessage: string) => {
         if (!user || !user._id || !chatUser?._id) {
             console.error("❌ User details missing!");
             return;
@@ -143,40 +130,25 @@ const ChatPage = () => {
                 _id: `temp-${Date.now()}`, // Temporary ID
                 message: textMessage,
                 sender_id: user._id, // ✅ Ensure sender ID matches user ID
-                sender_name: user.fullName, // ✅ Display as "Me"
+                sender_name: user.fullName || "Me", // ✅ Display as "Me"
                 receiver_id: chatUser._id,
                 timestamp: new Date().toLocaleString(),
                 read: false,
             };
 
-            console.log("📝 Temporary Message Before Sending:", tempMessage);
-
-            // ✅ Append to UI immediately
-            setMessages((prevMessages) => {
-                const updatedMessages = [...prevMessages, tempMessage];
-                console.log("📌 Updated Messages in State:", updatedMessages);
-                return updatedMessages;
-            });
+            setMessages((prevMessages) => [...prevMessages, tempMessage]);
 
             // ✅ Send message via API
             const newMessage = await sendMessage(bookingId as string, user._id, chatUser._id, textMessage);
 
-            console.log("✅ Message successfully sent:", newMessage);
-
             // ✅ Replace temp message with real API response
-            setMessages((prevMessages) => {
-                const finalMessages = prevMessages.map((msg) =>
-                    msg._id.startsWith("temp-") ? newMessage : msg
-                );
-                console.log("📌 Final Messages in State (After API Response):", finalMessages);
-                return finalMessages;
-            });
-
+            setMessages((prevMessages) =>
+                prevMessages.map((msg) => (msg._id.startsWith("temp-") ? newMessage : msg))
+            );
         } catch (error) {
             console.error("❌ Error sending message:", error);
         }
-    };
-
+    }, [user, chatUser, bookingId]);
 
     return (
         <div className="max-w-2xl mx-auto p-4">
