@@ -10,8 +10,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import checkAuth from '@/actions/checkAuth'
 import axiosInstance from '@/utils/axios'
-import { loginUser } from "@/actions/authActions";
-
 // "use client";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slice/authSlice";
@@ -48,18 +46,34 @@ const PageLogin: FC = () => {
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setError("");
-	
-		const result = await loginUser(email, password, dispatch) || { success: false, error: "Unexpected error occurred." };		if (result.success) {
-		  setSuccess(true);
-		  router.push("/");
-		} else {
-		  setError(result.error);
+
+		try {
+			const response = await axios.post(
+				`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/login`,
+				{
+					email,
+					password,
+					type: "user", // ✅ Explicitly set type to "user"
+				},
+				{ withCredentials: true }
+			);
+
+			if (response.data.success) {
+				setSuccess(true);
+				console.log(response, "all data");
+				console.log(response.data.user, "passed data");
+
+				dispatch(setUser(response.data.user));
+				
+				localStorage.setItem('accessToken', response.data.accessToken);
+				localStorage.setItem('refreshToken', response.data.refreshToken);
+				// ✅ Store user in Redux
+				router.push("/");
+			}
+		} catch (err: any) {
+			setError(err.response?.data?.error || "Invalid email or password");
 		}
-	  };
-
-
-	
-
+	};
 
 	if (isAuthLoading) {
 		return (

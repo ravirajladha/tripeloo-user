@@ -25,7 +25,9 @@ const Page = () => {
 
   const renderAuthor = (post: any) => {
     const isExpanded = expandedPostId === post.id;
-    const truncatedDescription = post.description.slice(0, 100);
+    const maxLength = 100; // ✅ Set a limit for when to show "Read more"
+    const shouldShowReadMore = post.description.length > maxLength;
+    const truncatedDescription = post.description.slice(0, maxLength);
   
     return (
       <div className="max-w-screen-md mx-auto">
@@ -41,13 +43,16 @@ const Page = () => {
   
              {/* Description with "Read more" */}
              <span className="text-sm text-neutral-500 sm:text-base dark:text-neutral-300">
-              {isExpanded ? post.description : `${truncatedDescription}...`}
-              <button
-                className="text-primary-6000 font-medium ml-1"
-                onClick={() => toggleReadMore(post.id)}
-              >
-                {isExpanded ? "Show less" : "Read more"}
-              </button>
+             {isExpanded ? post.description : truncatedDescription}
+      
+      {shouldShowReadMore && (
+        <button
+          className="text-primary-6000 font-medium ml-1"
+          onClick={() => toggleReadMore(post.id)}
+        >
+          {isExpanded ? "Show less" : "... Read more"}
+        </button>
+      )}
             </span>
   
             <p>

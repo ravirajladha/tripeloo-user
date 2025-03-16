@@ -8,6 +8,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slice/authSlice";
 import { useRouter } from "next/navigation";
+import { loginUser } from "@/actions/authActions";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
@@ -27,27 +28,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, closeModal }) => {
     e.preventDefault();
     setError("");
 
-    try {
-      const response = await axios.post(
-        `${BACKEND_URL}/api/v1/users/login`,
-        { email, password ,type:"user"},
-        { withCredentials: true }
-      );
+    const result = await loginUser(email, password, dispatch) || { success: false, error: "Unexpected error occurred." };
 
-      if (response.data.success) {
-        dispatch(setUser(response.data.data.user)); // Store user in Redux
-         // Store tokens in localStorage
-      localStorage.setItem('accessToken', response.data.accessToken);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-      
-        closeModal(); // Close modal
-
-        router.refresh(); // Refresh to reflect login status
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Invalid email or password.");
+    if (result.success) {
+      closeModal(); // ✅ Close modal after login
+      router.refresh(); // ✅ Refresh to reflect login status
+    } else {
+      setError(result.error || "Something went wrong, please try again.");
     }
-  };
+};
+
+
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -84,7 +75,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, closeModal }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-              </label>
+              </label>  
 
               {error && <p className="text-red-500">{error}</p>}
 

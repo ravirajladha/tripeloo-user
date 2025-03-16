@@ -5,8 +5,9 @@ import { fetchAllStays } from "@/actions/getAllStays"; // ✅ Fetch stays from b
 import { createPost } from "@/actions/postActions"; // ✅ API call for creating posts
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import avatar1 from "@/images/avatars/Image-2.png";
-
-
+import { handleProtectedNavigation } from "@/utils/handleProtectedNavigation";
+import { useRouter } from 'next/navigation'
+import { useDispatch, useSelector } from "react-redux";
 interface Stay {
 	_id: string;
 	title: string;
@@ -15,14 +16,16 @@ interface Stay {
 
   
 const CreatePost = ({ setRefreshTrigger }: any) => {
-  const user = useAppSelector((state) => state.auth.user); // ✅ Get user details
-  const [description, setDescription] = useState("");
+	const dispatch = useDispatch();
+  const { user, isAuthenticated } = useSelector((state: any) => state.auth); // ✅ Fetch user from Redux
+	console.log("Redux State - auth:", { user, isAuthenticated });  const [description, setDescription] = useState("");
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [stayId, setStayId] = useState(""); // ✅ Store selected Stay ID
   const [stays, setStays] = useState<Stay[]>([]); // ✅ Explicitly define stays type
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+	const router = useRouter();
 
   // ✅ Fetch all stays from backend
   useEffect(() => {
@@ -59,11 +62,13 @@ const CreatePost = ({ setRefreshTrigger }: any) => {
 
   // ✅ Handle post submission
   const handlePostSubmit = async () => {
+    handleProtectedNavigation(null, isAuthenticated, router, "", dispatch);
+  
     if (!description.trim()) {
       setMsg("Please add a description!");
       return;
     }
-
+  
     setLoading(true);
     try {
       await createPost({ description, mediaFiles, stayId }); // ✅ Call API action
@@ -78,6 +83,7 @@ const CreatePost = ({ setRefreshTrigger }: any) => {
     }
     setLoading(false);
   };
+  
 
   return (
     <div className="mx-auto mb-8 max-w-4xl rounded-lg bg-white p-4 shadow-md">
@@ -128,11 +134,13 @@ const CreatePost = ({ setRefreshTrigger }: any) => {
 
       {/* ✅ Post Button */}
       <div className="mt-4">
-        <ButtonPrimary className="w-full py-3" onClick={handlePostSubmit} disabled={loading}>
-          {loading ? "Posting..." : "Post"}
-        </ButtonPrimary>
-        {msg && <p className="p-3 text-center text-green-500">{msg}</p>}
-      </div>
+  <ButtonPrimary className="w-full py-3" onClick={handlePostSubmit} disabled={loading}>
+    {loading ? "Posting..." : "Post"}
+  </ButtonPrimary>
+  {msg && <p className="p-3 text-center text-green-500">{msg}</p>}
+</div>
+
+
     </div>
   );
 };

@@ -68,8 +68,8 @@ export const likePost = async (postId: string) => {
     const token = localStorage.getItem("accessToken"); // ✅ Get token inside function
 
     const response = await axiosInstance.post(
-      "/api/v1/users/post/like",
-      { postId },
+      `/api/v1/users/post/like/${postId}`, // ✅ Pass postId in URL
+      {},
       { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
     );
 

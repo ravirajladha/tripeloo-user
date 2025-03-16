@@ -129,9 +129,10 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 
 
 	const renderAuthor = (post: any) => {
-		const isExpanded = expandedPostId === post._id
-		const truncatedDescription = post.description.slice(0, 200)
-
+		const isExpanded = expandedPostId === post.id;
+		const maxLength = 100; // ✅ Set a limit for when to show "Read more"
+		const shouldShowReadMore = post.description.length > maxLength;
+		const truncatedDescription = post.description.slice(0, maxLength);
 		const formattedDate = new Intl.DateTimeFormat('en-GB', {
 			year: 'numeric',
 			month: 'short',
@@ -157,13 +158,16 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 							</h2>
 
 							<span className="text-sm text-neutral-500 dark:text-neutral-300 sm:text-base">
-								{isExpanded ? post.content : `${truncatedDescription}...`}
-								<button
-									className="ml-1 font-medium text-primary-6000"
-									onClick={() => toggleReadMore(post._id)}
-								>
-									{isExpanded ? 'Show less' : 'Read more'}
-								</button>
+							{isExpanded ? post.description : truncatedDescription}
+      
+      {shouldShowReadMore && (
+        <button
+          className="text-primary-6000 font-medium ml-1"
+          onClick={() => toggleReadMore(post.id)}
+        >
+          {isExpanded ? "Show less" : "... Read more"}
+        </button>
+      )}
 							</span>
 
 							<p>
@@ -331,13 +335,14 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 											</div>
 										</div>
 									) : (
-										<Image
-											className="rounded-xl object-cover opacity-50"
-											src="/default-placeholder.png"
-											width={600}
-											height={600}
-											alt="No Image Available"
-										/>
+										// <Image
+										// 	className="rounded-xl object-cover opacity-50"
+										// 	src="/default-placeholder.png"
+										// 	width={600}
+										// 	height={600}
+										// 	alt="No Image Available"
+										// />
+										<span>No image uploaded</span>
 									)}
 									<div className="mt-4">
 										<h2 className="text-xl font-semibold">Post Description</h2>
