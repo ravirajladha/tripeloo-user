@@ -9,6 +9,7 @@ import ChatMessages from "../components/ChatMessages";
 import ChatInput from "../components/ChatInput";
 import { fetchChatMessages, sendMessage, markMessagesAsRead } from "@/actions/chatActions";
 import { useAppSelector } from "@/store/hook"; // ✅ Import Redux hooks
+import { useCallback } from "react";
 
 interface Message {
     _id: string;
@@ -65,72 +66,63 @@ const ChatPage = () => {
   }
 
     // ✅ Fetch messages for this booking
-    const fetchChat = async () => {
+
+    const fetchChat = useCallback(async () => {
+        if (!bookingId) return;
+    
         try {
             console.log("🔍 Fetching chat for booking ID:", bookingId);
             const data = await fetchChatMessages(bookingId as string);
-
-            console.log("📩 Received messages from API:", data.messages);
-
+    
             if (!Array.isArray(data.messages)) {
                 console.error("❌ Invalid messages format received:", data.messages);
                 return;
             }
-
-            const formattedMessages = data.messages.map((msg: any) => ({
-                _id: msg._id,
-                message: msg.message,
-                sender_id: msg.sender_id?._id || msg.sender_id,
-                sender_name: msg.sender_id?.fullName || "Unknown",
-                receiver_id: msg.receiver_id?._id || msg.receiver_id,
-                timestamp: new Date(msg.timestamp).toLocaleString(),
-                read: msg.read,
-            }));
-
-            console.log("📌 Formatted Messages for Display:", formattedMessages);
-
-            setMessages(formattedMessages);
+    
+            setMessages(
+                data.messages.map((msg: any) => ({
+                    _id: msg._id,
+                    message: msg.message,
+                    sender_id: msg.sender_id?._id || msg.sender_id,
+                    sender_name: msg.sender_id?.fullName || "Unknown",
+                    receiver_id: msg.receiver_id?._id || msg.receiver_id,
+                    timestamp: new Date(msg.timestamp).toLocaleString(),
+                    read: msg.read,
+                }))
+            );
+    
             setChatUser(data.user || null);
             setIsLoading(false);
-
-            // ✅ Mark messages as read, then refresh chat
-            //   await markMessagesAsRead(bookingId as string, user._id);
-            //   fetchChat(); 
-
-            // ✅ Check if any messages are unread and mark them as read
-            const unreadMessages = data.messages.some((msg: ChatMessage) =>
-                !msg.read && typeof msg.receiver_id === "object" && msg.receiver_id._id === user._id
+    
+            const unreadMessages = data.messages.some(
+                (msg: ChatMessage) =>
+                    !msg.read &&
+                    typeof msg.receiver_id === "object" &&
+                    msg.receiver_id._id === user._id
             );
-
-
+    
             if (unreadMessages) {
-
                 await markMessagesAsRead(bookingId as string, user._id);
             }
-
         } catch (error) {
             console.error("❌ Error fetching chat:", error);
             setIsLoading(false);
         }
-    };
-
+    }, [bookingId, user?._id]); // ✅ Includes dependencies
+    
     useEffect(() => {
-        if (!bookingId) return;
-
         let intervalId: NodeJS.Timeout;
-
-        const fetchChatOnce = async () => {
-            await fetchChat();
-        };
-
-        fetchChatOnce(); // ✅ Fetch once immediately
-
+    
+        fetchChat(); // ✅ Fetch once immediately
+    
         intervalId = setInterval(() => {
-            fetchChatOnce();
+            fetchChat();
         }, 50000); // ✅ Fetch every 50 seconds
-
+    
         return () => clearInterval(intervalId); // ✅ Cleanup on component unmount
-    }, [bookingId]);
+    }, [bookingId, fetchChat]); // ✅ No more missing dependencies
+    
+    
     // ✅ Runs only when these values change
 
 
