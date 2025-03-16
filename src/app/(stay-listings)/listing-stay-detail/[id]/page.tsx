@@ -8,6 +8,8 @@ import FiveStartIconForRate from '@/components/FiveStartIconForRate'
 import StartRating from '@/components/StartRating'
 import Avatar from '@/shared/Avatar'
 import Badge from '@/shared/Badge'
+import { useCallback } from "react";
+
 import ButtonCircle from '@/shared/ButtonCircle'
 import ButtonPrimary from '@/shared/ButtonPrimary'
 import ButtonSecondary from '@/shared/ButtonSecondary'
@@ -69,6 +71,11 @@ const ListingStayDetailPage: FC = () => {
 	// 	setIsOpenModalAmenities(true);
 	// 	setGalleryImages(images); // Set the images in the state
 	//   }
+
+
+	const handleGuestsChange = useCallback((adults: number, children: number, rooms: number) => {
+		console.log("Updated Guests:", { adults, children, rooms });
+	  }, []);
 
 	const handleOpenModalImageGallery = () => {
 		router.push(`${thisPathname}/?modal=PHOTO_TOUR_SCROLLABLE` as Route)
@@ -723,11 +730,15 @@ const ListingStayDetailPage: FC = () => {
 				<form className="flex flex-col rounded-3xl border border-neutral-200 dark:border-neutral-700">
 					<StayDatesRangeInput className="z-[11] flex-1" onChange={setSelectedDates} />
 					<div className="w-full border-b border-neutral-200 dark:border-neutral-700"></div>
-					<GuestsInput className="flex-1" onChange={(adults, children, rooms) => {
+					{/* <GuestsInput className="flex-1" onChange={(adults, children, rooms) => {
 						setNumAdults(adults);
 						setNumChildren(children);
 						setNumRooms(rooms);
-					}} />
+					}} /> */}
+
+
+
+<GuestsInput className="flex-1"onChange={handleGuestsChange} />;
 				</form>
 
 				{/* TOTAL PRICE */}

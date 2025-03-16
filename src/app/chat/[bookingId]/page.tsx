@@ -42,16 +42,18 @@ const ChatPage = () => {
   const user = useAppSelector((state) => state.auth.user); // ✅ Fetch user from Redux store
     const router = useRouter();
   
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [chatUser, setChatUser] = useState<ChatUser | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const messagesEndRef = useRef(null);
+
+    
   if (!user || !user._id) {
     alert("Please log in to proceed with booking.");
     router.push("/login");
     return;
   }
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [chatUser, setChatUser] = useState<ChatUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const messagesEndRef = useRef(null);
 
 //   useEffect(() => {
 //     if (!bookingId) return;
