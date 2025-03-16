@@ -29,8 +29,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ text, sender, timestamp, read
   console.log(user._id, "user id")
 
   // const isUserMessage = sender == user._id ; 
+  const senderId = typeof sender === "object" ? sender._id : sender;
+  const isUserMessage = String(senderId) === String(user?._id);
 
-  const isUserMessage = String(sender?._id || sender) === String(user?._id);
+  // const isUserMessage = String(sender?._id || sender) === String(user?._id);
 
 
   console.log(isUserMessage,sender, user._id, "inside chat message");

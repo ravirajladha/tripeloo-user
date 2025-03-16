@@ -55,32 +55,8 @@ const ChatPage = () => {
     }
   }, [user, router]);
 
-    //   useEffect(() => {
-    //     if (!bookingId) return;
-    //     fetchChat();
 
-    //     const interval = setInterval(fetchChat, 5000);
-    //     return () => clearInterval(interval);
-    //   }, [bookingId]);
-
-    useEffect(() => {
-        if (!bookingId) return;
-
-        let intervalId: NodeJS.Timeout;
-
-        const fetchChatOnce = async () => {
-            await fetchChat();
-        };
-
-        fetchChatOnce(); // ✅ Fetch once immediately
-
-        intervalId = setInterval(() => {
-            fetchChatOnce();
-        }, 50000); // ✅ Fetch every 50 seconds
-
-        return () => clearInterval(intervalId); // ✅ Cleanup on component unmount
-    }, [bookingId]);
-    // ✅ Runs only when these values change
+ 
 
 
     // ✅ Ensure UI doesn't break while redirecting
@@ -138,7 +114,24 @@ const ChatPage = () => {
         }
     };
 
+    useEffect(() => {
+        if (!bookingId) return;
 
+        let intervalId: NodeJS.Timeout;
+
+        const fetchChatOnce = async () => {
+            await fetchChat();
+        };
+
+        fetchChatOnce(); // ✅ Fetch once immediately
+
+        intervalId = setInterval(() => {
+            fetchChatOnce();
+        }, 50000); // ✅ Fetch every 50 seconds
+
+        return () => clearInterval(intervalId); // ✅ Cleanup on component unmount
+    }, [bookingId]);
+    // ✅ Runs only when these values change
 
 
     // ✅ Send a new message
