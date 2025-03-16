@@ -7,7 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 
 interface ChatMessageProps {
   text: string;
-  sender: string;
+  sender: string | { _id: string }; 
   timestamp: string;
   read: boolean;
   senderName: string;
