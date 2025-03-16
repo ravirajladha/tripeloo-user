@@ -17,44 +17,47 @@ const widgetMenus: WidgetFooterMenu[] = [
     id: "5",
     title: "Getting started",
     menus: [
-      { href: "#", label: "Lorem ipsum dolor" },
-      { href: "#", label: "Sit amet" },
-      { href: "#", label: "Consectetur adipiscing" },
-      { href: "#", label: "Elit, sed do" },
-      { href: "#", label: "Eiusmod tempor" },
+      { href: "/", label: "Home" },
+      { href: "/stay-listing", label: "Stay Listings" },
+   
     ],
   },
   {
     id: "1",
     title: "Explore",
     menus: [
-      { href: "#", label: "Lorem ipsum dolor" },
-      { href: "#", label: "Sit amet" },
-      { href: "#", label: "Consectetur adipiscing" },
-      { href: "#", label: "Elit, sed do" },
-      { href: "#", label: "Eiusmod tempor" },
+      { href: "#", label: "My Account" },
+      { href: "#", label: "My Booking" },
+      { href: "#", label: "My Post" },
+      { href: "#", label: "My Profile" },
+      { href: "#", label: "" },
+
+  
     ],
   },
   {
     id: "2",
-    title: "Resources",
+    title: "About Us",
     menus: [
-      { href: "#", label: "Lorem ipsum dolor" },
-      { href: "#", label: "Sit amet" },
-      { href: "#", label: "Consectetur adipiscing" },
-      { href: "#", label: "Elit, sed do" },
-      { href: "#", label: "Eiusmod tempor" },
+      { href: "#", label: "About Us" },
+      { href: "#", label: "Terms of Services" },
+      { href: "#", label: "User Agreement" },
+      { href: "#", label: "Privacy" },
+      { href: "#", label: "Youtube Channel" },
+      { href: "#", label: "Twitter Handle" },
+      { href: "#", label: "Facebook Page" },
+      { href: "#", label: "Customer Support" },
+
+
     ],
   },
   {
     id: "4",
-    title: "Community",
+    title: "Business and Support",
     menus: [
-      { href: "#", label: "Lorem ipsum dolor" },
-      { href: "#", label: "Sit amet" },
-      { href: "#", label: "Consectetur adipiscing" },
-      { href: "#", label: "Elit, sed do" },
-      { href: "#", label: "Eiusmod tempor" },
+      { href: "#", label: "Contact Us" },
+      { href: "#", label: "Become Travel Provider" },
+ 
     ],
   },
 ];

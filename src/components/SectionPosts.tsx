@@ -49,7 +49,7 @@ interface Post {
 }
 
 interface SectionPostsProps {
-  limit?: number; // ✅ Add a limit prop (default: show all)
+	limit?: number; // ✅ Add a limit prop (default: show all)
 }
 
 const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
@@ -122,7 +122,7 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 	const toggleReadMore = (postId: number) => {
 		setExpandedPostId((prevId) => (prevId === postId ? null : postId))
 	}
-	
+
 	const [mainImage, setMainImage] = useState(
 		commentPost?.images?.length > 0 ? commentPost.images[0].url : "/default-placeholder.png"
 	);
@@ -158,16 +158,16 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 							</h2>
 
 							<span className="text-sm text-neutral-500 dark:text-neutral-300 sm:text-base">
-							{isExpanded ? post.description : truncatedDescription}
-      
-      {shouldShowReadMore && (
-        <button
-          className="text-primary-6000 font-medium ml-1"
-          onClick={() => toggleReadMore(post.id)}
-        >
-          {isExpanded ? "Show less" : "... Read more"}
-        </button>
-      )}
+								{isExpanded ? post.description : truncatedDescription}
+
+								{shouldShowReadMore && (
+									<button
+										className="text-primary-6000 font-medium ml-1"
+										onClick={() => toggleReadMore(post.id)}
+									>
+										{isExpanded ? "Show less" : "... Read more"}
+									</button>
+								)}
 							</span>
 
 							<p>
@@ -321,7 +321,7 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 
 											{/* ✅ Image Thumbnails */}
 											<div className="mt-3 flex gap-2 overflow-x-auto">
-												{commentPost.images.map((img:any, index:any) => (
+												{commentPost.images.map((img: any, index: any) => (
 													<Image
 														key={index}
 														className="w-16 h-16 rounded-md object-cover cursor-pointer border-2 hover:border-blue-500"

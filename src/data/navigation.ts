@@ -154,7 +154,7 @@ const otherPageChildMenus: NavItemType[] = [
 // 	},
 // ]
 
-export const NAVIGATION_DEMO: NavItemType[] = [
+export const NAVIGATION_DEMO1: NavItemType[] = [
 	// {
 	// 	id: ncNanoId(),
 	// 	href: '/',
@@ -188,11 +188,11 @@ export const NAVIGATION_DEMO: NavItemType[] = [
 
 			//
 			
-			{
-				id: ncNanoId(),
+			// {
+			// 	id: ncNanoId(),
 				// href: '/tour-and-package',
-				href:'/',
-				name: 'Tours',
+				// href:'/',
+				// name: 'Tours',
 				// type: 'dropdown',
 				// children: [
 				// 	{
@@ -206,13 +206,13 @@ export const NAVIGATION_DEMO: NavItemType[] = [
 				// 		name: 'Real Estate Maps',
 				// 	},
 				// ],
-			},
+			// },
 
-			{
-				id: ncNanoId(),
+			// {
+			// 	id: ncNanoId(),
 				// href: '/listing-experiences',
-				href:'/',
-				name: 'Activities',
+				// href:'/',
+				// name: 'Activities',
 				// type: 'dropdown',
 				// children: [
 				// 	{
@@ -231,7 +231,7 @@ export const NAVIGATION_DEMO: NavItemType[] = [
 				// 		name: 'Experiences Detail',
 				// 	},
 				// ],
-			},
+			// },
 			//
 			// {
 			// 	id: ncNanoId(),
@@ -271,6 +271,55 @@ export const NAVIGATION_DEMO: NavItemType[] = [
 	// 	children: otherPageChildMenus,
 	// },
 ]
+
+
+export const NAVIGATION_DEMO: NavItemType[] = [
+	{
+		id: ncNanoId(),
+		href: '/',
+		name: 'Home',
+		type: 'none', // ✅ Simple Home link
+	},
+
+	{
+		id: ncNanoId(),
+		href: '/listing-stay',
+		name: 'Listings', // ✅ New separate "Listings" section
+		type: 'dropdown',
+		children: [
+			{
+				id: ncNanoId(),
+				href: '/listing-stay',
+				name: 'Stay Listings',
+			},
+			
+			
+		],
+	},
+
+	{
+		id: ncNanoId(),
+		href: '/',
+		name: 'My Profile',
+		type: 'none',
+	},
+
+	{
+		id: ncNanoId(),
+		href: '/account',
+		name: 'My Account',
+		type: 'none',
+	},
+
+	{
+		id: ncNanoId(),
+		href: '/contact',
+		name: 'Contact Us',
+		type: 'none',
+	},
+];
+
+
 
 export const NAVIGATION_DEMO_2: NavItemType[] = [
 	{
