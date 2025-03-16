@@ -35,6 +35,7 @@ interface Booking {
   checkOut: string;
   totalPrice: number;
   createdAt: string;
+  status:string;
 }
 
 
@@ -167,7 +168,7 @@ const AuthorPage: FC<AuthorPageProps> = ({ }) => {
             </svg>
             <span className="text-neutral-6000 dark:text-neutral-300">
 
-              <span className="text-sm">{user?.phoneNumber}</span>
+              <span className="text-sm">{user?.phoneNumber ?? 8986000099}</span>
 
             </span>
           </div>

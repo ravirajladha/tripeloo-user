@@ -11,6 +11,7 @@ import Heading from '@/shared/Heading'
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
 import CreatePost from './CreatePost'
 import axios from 'axios'
+import { fetchAllPosts, addComment, likePost } from "@/actions/postActions"; // ✅ Import new API actions
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -37,16 +38,21 @@ interface Reply {
 }
 
 interface Post {
-	_id: string
-	content: string
-	image: string
-	user: User
-	likes: any
-	comments: Comments[]
-	createdAt: string
+	_id: string;
+	description: string;
+	images: { url: string }[];
+	user: User;
+	stay_id?: string;
+	likes: any;
+	comments: Comments[];
+	createdAt: string;
 }
 
-const PostSection = () => {
+interface SectionPostsProps {
+  limit?: number; // ✅ Add a limit prop (default: show all)
+}
+
+const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [expandedPostId, setExpandedPostId] = useState<number | null>(null)
 	const [posts, setPosts] = useState<Post[]>([])
@@ -68,72 +74,63 @@ const PostSection = () => {
 	}
 	const handleAddComment = async (post: Post) => {
 		try {
-			const res = await axios.post(
-				`${BACKEND_URL}/api/v1/users/post/createComment`,
-				{
-					content: commentText,
-					postId: post._id,
-				},
-				{
-					withCredentials: true,
-				},
-			)
-			const newComment = res.data.comment
+			const newComment = await addComment({ postId: post._id, commentText });
 
 			setCommentPost((prevPost: Post) =>
-				prevPost._id === post._id
-					? { ...prevPost, comments: [...prevPost.comments, newComment] }
-					: prevPost,
-			)
+				prevPost._id === post._id ? { ...prevPost, comments: [...prevPost.comments, newComment] } : prevPost
+			);
 
-			setCommentText('')
-			setRefreshTrigger((prev) => prev + 1)
+			setCommentText("");
+			setRefreshTrigger((prev) => prev + 1);
 		} catch (error) {
-			console.error('Error adding comment:', error)
+			console.error("Error adding comment:", error);
 		}
-	}
+	};
+
 	const handleLike = async (post: Post) => {
 		try {
-			const res = await axios.post(
-				`${BACKEND_URL}/api/v1/users/post/like`,
-				{
-					postId: post._id,
-				},
-				{
-					withCredentials: true,
-				},
-			)
-			console.log(res.data.post)
-			const newLike = res.data.post.likes
+			const updatedLikes = await likePost(post._id);
+
 			setPosts((prevPosts: Post[]) =>
 				prevPosts.map((prevPost) =>
-					prevPost._id === post._id
-						? { ...prevPost, likes: newLike }
-						: prevPost,
-				),
-			)
+					prevPost._id === post._id ? { ...prevPost, likes: updatedLikes } : prevPost
+				)
+			);
 		} catch (error) {
-			console.error('Error adding like:', error)
+			console.error("Error adding like:", error);
 		}
-	}
+	};
+
+	// ✅ Fetch posts on mount and refresh
+	useEffect(() => {
+		const getPosts = async () => {
+			try {
+				const postsData = await fetchAllPosts();
+				console.log(postsData, "posts data")
+
+				setPosts(limit ? postsData.slice(0, limit) : postsData); // ✅ Limit posts if needed
+
+
+				setPosts(postsData);
+			} catch (error) {
+				console.error("Error fetching posts:", error);
+			}
+		};
+		getPosts();
+	}, [refreshTrigger]);
 
 	const toggleReadMore = (postId: number) => {
 		setExpandedPostId((prevId) => (prevId === postId ? null : postId))
 	}
+	
+	const [mainImage, setMainImage] = useState(
+		commentPost?.images?.length > 0 ? commentPost.images[0].url : "/default-placeholder.png"
+	);
 
-	const fetchPosts = async () => {
-		const res = await axios.get(`${BACKEND_URL}/api/v1/users/post/all`)
-		setPosts(res.data.posts)
-		console.log(res.data.posts)
-	}
-
-	useEffect(() => {
-		fetchPosts()
-	}, [refreshTrigger])
 
 	const renderAuthor = (post: any) => {
 		const isExpanded = expandedPostId === post._id
-		const truncatedDescription = post.content.slice(0, 200)
+		const truncatedDescription = post.description.slice(0, 200)
 
 		const formattedDate = new Intl.DateTimeFormat('en-GB', {
 			year: 'numeric',
@@ -259,18 +256,38 @@ const PostSection = () => {
 					Social Posts
 				</Heading>
 				{posts.map((post) => (
-					<div key={post._id}>
+					<div key={post._id} className="border p-4 rounded-lg shadow-md">
 						{renderAuthor(post)}
-						<Image
-							className="h-[300px] w-full rounded-xl object-top sm:h-[300px] md:h-[400px] lg:h-[500px]"
-							src={post?.image}
-							alt={post?.user?.fullName}
-							width={1200}
-							height={800}
-						/>
+
+						{/* ✅ Show Multiple Images */}
+						<div className="flex overflow-x-scroll space-x-2">
+							{post.images.length > 0 ? (
+								post.images.map((img, index) => (
+									<Image
+										key={index}
+										className="h-[300px] w-[400px] rounded-lg object-cover"
+										src={img.url}
+										alt={`Post Image ${index + 1}`}
+										width={800}
+										height={600}
+									/>
+								))
+							) : (
+								// <Image
+								//   className="h-[300px] w-full rounded-lg object-cover opacity-50"
+								//   src="/default-placeholder.png"
+								//   alt="No Image Available"
+								//   width={800}
+								//   height={600}
+								// />
+								<span></span>
+							)}
+						</div>
+
 						{renderSocialActions(post)}
 					</div>
 				))}
+
 
 				<div className="mt-11 flex items-center justify-center">
 					<Link href="/post">
@@ -285,18 +302,47 @@ const PostSection = () => {
 					<div className="mx-auto h-[90vh] w-full max-w-6xl overflow-hidden rounded-lg bg-white shadow-lg dark:bg-neutral-900">
 						<div className="h-full overflow-y-auto">
 							<div className="flex h-full flex-col lg:flex-row">
+								{/* ✅ State to Store Main Image */}
 								<div className="p-6 lg:w-1/2">
-									<Image
-										className="rounded-xl"
-										src={commentPost?.image}
-										width={600}
-										height={600}
-										alt="Post Image"
-									/>
+									{commentPost?.images?.length > 0 ? (
+										<div className="relative">
+											{/* ✅ Main Image Display */}
+											<Image
+												className="rounded-xl object-cover"
+												src={mainImage} // ✅ Show currently selected image
+												width={600}
+												height={600}
+												alt="Post Image"
+											/>
+
+											{/* ✅ Image Thumbnails */}
+											<div className="mt-3 flex gap-2 overflow-x-auto">
+												{commentPost.images.map((img:any, index:any) => (
+													<Image
+														key={index}
+														className="w-16 h-16 rounded-md object-cover cursor-pointer border-2 hover:border-blue-500"
+														src={img.url}
+														width={60}
+														height={60}
+														alt={`Image ${index + 1}`}
+														onClick={() => setMainImage(img.url)} // ✅ Click to change main image
+													/>
+												))}
+											</div>
+										</div>
+									) : (
+										<Image
+											className="rounded-xl object-cover opacity-50"
+											src="/default-placeholder.png"
+											width={600}
+											height={600}
+											alt="No Image Available"
+										/>
+									)}
 									<div className="mt-4">
-										<h2 className="text-xl font-semibold">Post Title</h2>
+										<h2 className="text-xl font-semibold">Post Description</h2>
 										<p className="text-sm text-neutral-600 dark:text-neutral-300">
-											{commentPost?.content}
+											{commentPost?.description}
 										</p>
 									</div>
 								</div>
@@ -342,29 +388,5 @@ const PostSection = () => {
 	)
 }
 
-//  Example posts data
-// const posts = [
-// 	{
-// 		id: 1,
-// 		author: 'Fones Mimi',
-// 		date: 'May 20, 2021',
-// 		description: 'Apple now opens its 100th store in China.',
-// 		image: travelhero2Image,
-// 	},
-// 	{
-// 		id: 2,
-// 		author: 'John Doe',
-// 		date: 'June 15, 2021',
-// 		description: 'New breakthrough in AI technology.',
-// 		image: travelhero2Image,
-// 	},
-// 	{
-// 		id: 3,
-// 		author: 'Jane Smith',
-// 		date: 'July 10, 2021',
-// 		description: 'Exploring renewable energy potential.',
-// 		image: travelhero2Image,
-// 	},
-// ]
 
 export default PostSection

@@ -21,14 +21,32 @@ interface BookingCardProps {
     checkOut: string;
     totalPrice: number;
     createdAt: string;
+    status:string;
   };
 }
+
+// ✅ Function to determine status color
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "pending":
+      return "text-yellow-500 bg-yellow-100"; // 🟡 Yellow
+    case "confirmed":
+      return "text-green-600 bg-green-100"; // 🟢 Green
+    case "cancelled":
+      return "text-red-600 bg-red-100"; // 🔴 Red
+    case "completed":
+      return "text-blue-500 bg-blue-100"; // 🔵 Blue
+    default:
+      return "text-gray-500 bg-gray-100"; // Default (Gray)
+  }
+};
+
 
 const BookingCard: React.FC<BookingCardProps> = ({ booking }) => {
     console.log("Booking Data:", booking);
 
     
-  const { stay, roomType, numRooms, numAdults, numChildren, checkIn, checkOut, totalPrice, createdAt } = booking;
+  const { stay, roomType, numRooms, numAdults, numChildren, checkIn, checkOut, totalPrice, createdAt ,status} = booking;
 
   return (
     <div className="border rounded-lg p-4 shadow-md flex flex-col md:flex-row items-center gap-6 bg-white dark:bg-neutral-900">
@@ -65,8 +83,21 @@ const BookingCard: React.FC<BookingCardProps> = ({ booking }) => {
         </p>
         <p className="text-lg font-semibold dark:text-gray-400">
        Amount to be collected:    ₹{totalPrice}
-        </p>
+        </p>       
+         <p className="text-lg font-semibold dark:text-gray-400">
+
+          ✅ Booking Status:   
+          <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${getStatusColor(status)}`}>
+          {status.charAt(0).toUpperCase() + status.slice(1)} {/* Capitalize first letter */}
+        </span>
+        </p>       
+
         <StartRating reviewCount={5} point={4} />
+        <Link href={`/chat/${booking._id}`} passHref>
+          <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            Go to Chat
+          </button>
+        </Link>
       </div>
     </div>
   );

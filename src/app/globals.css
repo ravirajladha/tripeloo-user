@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    @apply bg-red-500 text-white; /* Red background with white text */
+  }
+  
 /* ✅ Scope styles to SectionDateRange only */
 .availability-datepicker-wrapper .react-datepicker {
     width: 100% !important;
@@ -25,7 +29,7 @@
     align-items: center !important;
     justify-content: center !important;
     font-size: 0.85rem !important;
-    background-color: #fff !important;
+    background-color: #e24545 !important;
     color: #000 !important;
     border: 1px solid #aeaeae !important;
     border-radius: 0.3rem !important;
