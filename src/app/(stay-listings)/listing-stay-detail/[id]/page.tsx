@@ -75,7 +75,7 @@ const ListingStayDetailPage: FC = () => {
 
 	const handleGuestsChange = useCallback((adults: number, children: number, rooms: number) => {
 		console.log("Updated Guests:", { adults, children, rooms });
-	  }, []);
+	}, []);
 
 	const handleOpenModalImageGallery = () => {
 		router.push(`${thisPathname}/?modal=PHOTO_TOUR_SCROLLABLE` as Route)
@@ -128,44 +128,44 @@ const ListingStayDetailPage: FC = () => {
 		? Math.ceil((selectedDates[1].getTime() - selectedDates[0].getTime()) / (1000 * 60 * 60 * 24))
 		: 1;
 
-		const getTotalPrice = () => {
-			let total = 0;
-			if (!selectedDates[0] || !selectedDates[1]) {
-				return total; // Return 0 if dates are not selected
-			}
-		
-			if (selectedRoomType.availability?.length) {
-				for (let i = 0; i < nights; i++) {
-					const date = selectedDates[0] ? new Date(selectedDates[0]) : new Date();
-					date.setDate(date.getDate() + i);
-					
-					const priceData = selectedRoomType.availability.find((avail:any) =>
-						new Date(avail.date).toDateString() === date.toDateString()
-					);
-		
-					total += (priceData ? priceData.price : selectedRoomType.price_per_night) * numRooms;
-				}
-			} else {
-				total = selectedRoomType.price_per_night * numRooms * nights;
-			}
-			return total;
-		};
-		
+	const getTotalPrice = () => {
+		let total = 0;
+		if (!selectedDates[0] || !selectedDates[1]) {
+			return total; // Return 0 if dates are not selected
+		}
 
-		const handleReserve = () => {
-			if (!selectedDates[0] || !selectedDates[1]) {
-				alert("Please select valid dates before proceeding.");
-				return;
+		if (selectedRoomType.availability?.length) {
+			for (let i = 0; i < nights; i++) {
+				const date = selectedDates[0] ? new Date(selectedDates[0]) : new Date();
+				date.setDate(date.getDate() + i);
+
+				const priceData = selectedRoomType.availability.find((avail: any) =>
+					new Date(avail.date).toDateString() === date.toDateString()
+				);
+
+				total += (priceData ? priceData.price : selectedRoomType.price_per_night) * numRooms;
 			}
-		
-			const formattedStartDate = selectedDates[0]?.toISOString() || new Date().toISOString();
-			const formattedEndDate = selectedDates[1]?.toISOString() || new Date().toISOString();
-		
-			router.push(
-				`/checkout?roomTypeId=${selectedRoomType._id}&numRooms=${numRooms}&numAdults=${numAdults}&numChildren=${numChildren}&startDate=${encodeURIComponent(formattedStartDate)}&endDate=${encodeURIComponent(formattedEndDate)}&totalPrice=${getTotalPrice()}`
-			);
-		};
-		
+		} else {
+			total = selectedRoomType.price_per_night * numRooms * nights;
+		}
+		return total;
+	};
+
+
+	const handleReserve = () => {
+		if (!selectedDates[0] || !selectedDates[1]) {
+			alert("Please select valid dates before proceeding.");
+			return;
+		}
+
+		const formattedStartDate = selectedDates[0]?.toISOString() || new Date().toISOString();
+		const formattedEndDate = selectedDates[1]?.toISOString() || new Date().toISOString();
+
+		router.push(
+			`/checkout?roomTypeId=${selectedRoomType._id}&numRooms=${numRooms}&numAdults=${numAdults}&numChildren=${numChildren}&startDate=${encodeURIComponent(formattedStartDate)}&endDate=${encodeURIComponent(formattedEndDate)}&totalPrice=${getTotalPrice()}`
+		);
+	};
+
 
 	const renderSection1 = () => {
 		return (
@@ -736,9 +736,7 @@ const ListingStayDetailPage: FC = () => {
 						setNumRooms(rooms);
 					}} /> */}
 
-
-
-<GuestsInput className="flex-1"onChange={handleGuestsChange} />;
+					<GuestsInput className="flex-1" onChange={handleGuestsChange} />
 				</form>
 
 				{/* TOTAL PRICE */}

@@ -108,7 +108,7 @@ const ChatPage = () => {
 
         intervalId = setInterval(() => {
             fetchChat();
-        }, 50000); // ✅ Fetch every 50 seconds
+        }, 5000); // ✅ Fetch every 50 seconds
 
         return () => clearInterval(intervalId); // ✅ Cleanup on unmount
     }, [bookingId, fetchChat]); // ✅ Ensure dependencies are correct

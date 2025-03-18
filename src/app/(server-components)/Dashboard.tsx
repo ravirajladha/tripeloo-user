@@ -3,6 +3,7 @@ import imagePng from "@/images/hero-right.png";
 import HeroSearchForm from "../(client-components)/(HeroSearchForm)/HeroSearchForm";
 import Image from "next/image";
 import ButtonPrimary from "@/shared/ButtonPrimary";
+import ButtonMain from "@/shared/ButtonMain";
 
 export interface SectionHeroProps {
   className?: string;
@@ -22,9 +23,9 @@ const SectionHero: FC<SectionHeroProps> = ({ className = "" }) => {
             Accompanying us, you have a trip full of experiences. With Tripeloo,
             booking accommodation, resort villas, hotels1
           </span>
-          <ButtonPrimary href="/listing-stay-map" sizeClass="px-5 py-4 sm:px-7">
+          <ButtonMain href="/listing-stay-map" sizeClass="px-5 py-4 sm:px-7">
             Start your search
-          </ButtonPrimary>
+          </ButtonMain>
         </div>
         <div className="flex-grow">
           <Image className="w-full" src={imagePng} alt="hero" priority />
