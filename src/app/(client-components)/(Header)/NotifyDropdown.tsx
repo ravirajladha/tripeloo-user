@@ -10,28 +10,28 @@ import avatar6 from "@/images/avatars/Image-6.png";
 
 const notifications = [
   {
-    name: "Booking alloted",
-    description: "lorem epsum alot",
+    name: "Hello!",
+    description: "Welcome To Tripeloo",
     time: "3 minutes ago",
-    href: "#a",
-    avatar: avatar4,
-  },
-  {
-    name: "User 1",
-    description: "Message Received",
-
-    time: "1 minute ago",
     href: "#a",
     avatar: avatar5,
   },
-  {
-    name: "User 2",
-    description: "lorem epsum alot",
+  // {
+  //   name: "User 1",
+  //   description: "Message Received",
 
-    time: "3 minutes ago",
-    href: "#a",
-    avatar: avatar6,
-  },
+  //   time: "1 minute ago",
+  //   href: "#a",
+  //   avatar: avatar5,
+  // },
+  // {
+  //   name: "User 2",
+  //   description: "lorem epsum alot",
+
+  //   time: "3 minutes ago",
+  //   href: "#a",
+  //   avatar: avatar6,
+  // },
 ];
 
 interface Props {

@@ -16,7 +16,7 @@ export interface MainNav2Props {
 
 const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
   return (
-    <div className={`MainNav2 relative z-10 ${className} bg-red-400`}>
+    <div className={`MainNav2 relative z-10 ${className}`} style={{ backgroundColor: '#D91C49' }}>
       <div className="px-4 h-20 lg:container flex justify-between ">
         <div className="hidden md:flex justify-start flex-1 space-x-3 sm:space-x-8 lg:space-x-10">
           <Logo className="w-24 self-center" />

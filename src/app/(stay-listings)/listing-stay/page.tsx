@@ -118,7 +118,7 @@ const ListingStay: FC = () => {
           </div>
         </div>
 
-        <button className="mb-4 px-6 py-2 bg-red-500 text-white rounded-full" onClick={handleClearAll}>
+        <button className="mb-4 px-6 py-2 bg-[#D91C49] text-white rounded-full" onClick={handleClearAll}>
           Clear All Filters
         </button>
 

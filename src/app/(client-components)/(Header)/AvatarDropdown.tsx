@@ -32,7 +32,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 const AvatarDropdown: React.FC<Props> = ({ className = '' }) => {
 	const router = useRouter();
 	const dispatch = useDispatch();
-	const { user, isAuthenticated } = useSelector((state: any) => state.auth); // ✅ Fetch user from Redux
+	const { user, isAuthenticated } = useSelector((state: any) => state.auth);
 	console.log("Redux State - auth:", { user, isAuthenticated });
 	// const { isOpen, openModal, closeModal } = useLoginModal();
 
@@ -144,14 +144,17 @@ const AvatarDropdown: React.FC<Props> = ({ className = '' }) => {
 												</svg>
 											</div>
 											<div className="ml-4">
-												<p className="text-sm font-medium">{'My bookings'}</p>
+												<p className="text-sm font-medium">{'My Bookings'}</p>
 											</div>
 										</Link>
 
 										<Link
 											href={"/account"}
 											className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
-											onClick={(e) => handleProtectedNavigation(e, isAuthenticated, router, "/account", dispatch)}
+											onClick={(e) => {
+												handleProtectedNavigation(e, isAuthenticated, router, "/account", dispatch);
+												close(); // ✅ Close the dropdown
+											}}
 										>
 
 											<div className="flex flex-shrink-0 items-center justify-center text-neutral-500 dark:text-neutral-300">
@@ -214,7 +217,7 @@ const AvatarDropdown: React.FC<Props> = ({ className = '' }) => {
 
 
 
-
+{/* 
 										<Link
 											href={"/post"}
 											className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
@@ -240,11 +243,11 @@ const AvatarDropdown: React.FC<Props> = ({ className = '' }) => {
 											<div className="ml-4">
 												<p className="text-sm font-medium">{'My Profile'}</p>
 											</div>
-										</Link>
+										</Link> */}
 
 
 										{/* ------------------ 2 --------------------- */}
-										<Link
+										{/* <Link
 											href={isAuthenticated ? "/account-savelists" : "#"}
 											className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
 											onClick={(e) => handleProtectedNavigation(e, isAuthenticated, router, "/account-savelists", dispatch)}
@@ -268,7 +271,7 @@ const AvatarDropdown: React.FC<Props> = ({ className = '' }) => {
 											<div className="ml-4">
 												<p className="text-sm font-medium">{'Wishlist'}</p>
 											</div>
-										</Link>
+										</Link> */}
 
 										<div className="w-full border-b border-neutral-200 dark:border-neutral-700" />
 										{/* ------------------ 2 --------------------- */}
@@ -312,7 +315,7 @@ const AvatarDropdown: React.FC<Props> = ({ className = '' }) => {
 											<SwitchDarkMode2 />
 										</div>
 										{/* ------------------ 2 --------------------- */}
-										<Link
+										{/* <Link
 											href={'/#'}
 											className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
 											onClick={() => close()}
@@ -372,7 +375,7 @@ const AvatarDropdown: React.FC<Props> = ({ className = '' }) => {
 											<div className="ml-4">
 												<p className="text-sm font-medium">{'Help'}</p>
 											</div>
-										</Link>
+										</Link> */}
 										{/* ------------------ 2 --------------------- */}
 										{isAuthenticated ? (
 											<Link
