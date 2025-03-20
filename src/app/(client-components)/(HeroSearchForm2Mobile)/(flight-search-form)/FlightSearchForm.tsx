@@ -27,7 +27,7 @@ const FlightSearchForm = () => {
   const [guestInput, setGuestInput] = useState<GuestsObject>({
     guestAdults: 0,
     guestChildren: 0,
-    guestInfants: 0,
+    // guestInfants: 0,
   });
 
   const renderInputLocationPickup = () => {
@@ -223,9 +223,9 @@ const FlightSearchForm = () => {
       guestSelected += `${guest} guests`;
     }
 
-    if (guestInput.guestInfants) {
-      guestSelected += `, ${guestInput.guestInfants} infants`;
-    }
+    // if (guestInput.guestInfants) {
+    //   guestSelected += `, ${guestInput.guestInfants} infants`;
+    // }
 
     return (
       <div

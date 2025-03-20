@@ -11,22 +11,25 @@ import ClearDataButton from "../ClearDataButton";
 export interface StayDatesRangeInputProps {
   className?: string;
   fieldClassName?: string;
+  setStartDate: React.Dispatch<React.SetStateAction<Date | null>>; // Setter for startDate
+  setEndDate: React.Dispatch<React.SetStateAction<Date | null>>;     // Setter for endDate
 }
 
 const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
   className = "[ lg:nc-flex-2 ]",
   fieldClassName = "[ nc-hero-field-padding ]",
+  setStartDate,
+  setEndDate,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date("2023/02/06")
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date("2023/02/23"));
-  //
+  const [startDate, setLocalStartDate] = useState<Date | null>(null);
+  const [endDate, setLocalEndDate] = useState<Date | null>(null);
 
   const onChangeDate = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+    setLocalStartDate(start);
+    setLocalEndDate(end);
+    setStartDate(start);  // Update the parent component's state
+    setEndDate(end);      // Update the parent component's state
   };
 
   const renderInput = () => {
@@ -93,6 +96,7 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
                   startDate={startDate}
                   endDate={endDate}
                   selectsRange
+                  minDate={new Date()} 
                   monthsShown={2}
                   showPopperArrow={false}
                   inline

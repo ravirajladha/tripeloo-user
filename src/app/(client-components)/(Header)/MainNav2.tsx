@@ -27,7 +27,8 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
         </div>
 
         <div className="self-center lg:hidden flex-[3] max-w-lg !mx-auto md:px-3 bg-red-200">
-          <HeroSearchForm2MobileFactory />
+          {/* mobile responsive filter */}
+          {/* <HeroSearchForm2MobileFactory /> */}
         </div>
 
         <div className="hidden md:flex flex-shrink-0 justify-end flex-1 lg:flex-none text-neutral-700 dark:text-neutral-100">

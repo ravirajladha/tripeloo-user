@@ -49,10 +49,10 @@ const GuestsInput: FC<GuestsInputProps> = ({
       setGuestChildrenInputValue(value);
       newValue.guestChildren = value;
     }
-    if (type === "guestInfants") {
-      setGuestInfantsInputValue(value);
-      newValue.guestInfants = value;
-    }
+    // if (type === "guestInfants") {
+    //   setGuestInfantsInputValue(value);
+    //   newValue.guestInfants = value;
+    // }
   };
 
   const totalGuests =
@@ -120,14 +120,14 @@ const GuestsInput: FC<GuestsInputProps> = ({
             desc="Ages 2–12"
           />
 
-          <NcInputNumber
+          {/* <NcInputNumber
             className="w-full mt-6"
             defaultValue={guestInfantsInputValue}
             onChange={(value) => handleChangeData(value, "guestInfants")}
             max={4}
             label="Infants"
             desc="Ages 0–2"
-          />
+          /> */}
         </div>
       )}
     </div>

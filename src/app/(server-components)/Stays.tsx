@@ -40,8 +40,8 @@ const SectionHeroArchivePage: FC<SectionHeroArchivePageProps> = ({
               listingType
             ) : (
               <>
-                <i className="text-2xl las la-home"></i>
-                <span className="ml-2.5">234 properties</span>
+                {/* <i className="text-2xl las la-home"></i>
+                <span className="ml-2.5">234 properties</span> */}
               </>
             )}
           </div>

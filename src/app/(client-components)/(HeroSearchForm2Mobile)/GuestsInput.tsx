@@ -21,9 +21,9 @@ const GuestsInput: FC<GuestsInputProps> = ({
   const [guestChildrenInputValue, setGuestChildrenInputValue] = useState(
     defaultValue?.guestChildren || 0
   );
-  const [guestInfantsInputValue, setGuestInfantsInputValue] = useState(
-    defaultValue?.guestInfants || 0
-  );
+  // const [guestInfantsInputValue, setGuestInfantsInputValue] = useState(
+  //   defaultValue?.guestInfants || 0
+  // );
 
   useEffect(() => {
     setGuestAdultsInputValue(defaultValue?.guestAdults || 0);
@@ -31,15 +31,15 @@ const GuestsInput: FC<GuestsInputProps> = ({
   useEffect(() => {
     setGuestChildrenInputValue(defaultValue?.guestChildren || 0);
   }, [defaultValue?.guestChildren]);
-  useEffect(() => {
-    setGuestInfantsInputValue(defaultValue?.guestInfants || 0);
-  }, [defaultValue?.guestInfants]);
+  // useEffect(() => {
+  //   setGuestInfantsInputValue(defaultValue?.guestInfants || 0);
+  // }, [defaultValue?.guestInfants]);
 
   const handleChangeData = (value: number, type: keyof GuestsObject) => {
     let newValue = {
       guestAdults: guestAdultsInputValue,
       guestChildren: guestChildrenInputValue,
-      guestInfants: guestInfantsInputValue,
+      // guestInfants: guestInfantsInputValue,
     };
     if (type === "guestAdults") {
       setGuestAdultsInputValue(value);
@@ -49,10 +49,10 @@ const GuestsInput: FC<GuestsInputProps> = ({
       setGuestChildrenInputValue(value);
       newValue.guestChildren = value;
     }
-    if (type === "guestInfants") {
-      setGuestInfantsInputValue(value);
-      newValue.guestInfants = value;
-    }
+    // if (type === "guestInfants") {
+    //   setGuestInfantsInputValue(value);
+    //   newValue.guestInfants = value;
+    // }
     onChange && onChange(newValue);
   };
 
@@ -78,14 +78,14 @@ const GuestsInput: FC<GuestsInputProps> = ({
         desc="Ages 2–12"
       />
 
-      <NcInputNumber
+      {/* <NcInputNumber
         className="w-full mt-6"
         defaultValue={guestInfantsInputValue}
         onChange={(value) => handleChangeData(value, "guestInfants")}
         max={20}
         label="Infants"
         desc="Ages 0–2"
-      />
+      /> */}
     </div>
   );
 };

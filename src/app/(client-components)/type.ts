@@ -1,7 +1,9 @@
 export interface GuestsObject {
   guestAdults?: number;
+  guestRooms?: number;
+
   guestChildren?: number;
-  guestInfants?: number;
+  // guestInfants?: number;
 }
 
 export type StaySearchFormFields = "location" | "guests" | "dates";

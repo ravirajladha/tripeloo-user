@@ -51,3 +51,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
 };
 
 export default Layout;
+
+
+//mobile filter is in mainnav2

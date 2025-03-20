@@ -17,7 +17,7 @@ const StaySearchForm = () => {
   const [guestInput, setGuestInput] = useState<GuestsObject>({
     guestAdults: 0,
     guestChildren: 0,
-    guestInfants: 0,
+    // guestInfants: 0,
   });
   const [startDate, setStartDate] = useState<Date | null>(
     new Date("2024/08/06")
@@ -101,9 +101,9 @@ const StaySearchForm = () => {
       guestSelected += `${guest} guests`;
     }
 
-    if (guestInput.guestInfants) {
-      guestSelected += `, ${guestInput.guestInfants} infants`;
-    }
+    // if (guestInput.guestInfants) {
+    //   guestSelected += `, ${guestInput.guestInfants} infants`;
+    // }
 
     return (
       <div

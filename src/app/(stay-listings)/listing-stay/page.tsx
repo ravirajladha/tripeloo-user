@@ -1,31 +1,42 @@
 // ListingStay.tsx
 "use client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useMemo } from "react";
 import Pagination from "@/shared/Pagination";
 import StayCard2 from "./stayCard";
 import { fetchAllStays } from "@/actions/getAllStays";
 import { StayDataType } from "@/data/types";
-import { useFilter } from "../../../../src/context/LocationContext"; 
+import { useFilter } from "../../../../src/context/LocationContext";
 import SectionHeroArchivePage from "../../(server-components)/Stays";
 import TabFilters from "../TabFilters";
 
 const ListingStay: FC = () => {
+
+  console.log("ListingStay render triggered");
+
   const [stays, setStays] = useState<StayDataType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Grab the entire context
-  const { location, filters, setFilters } = useFilter();
+  const { location, filters, setFilters, setLocation } = useFilter();
 
   // We'll do a useEffect any time location or filters changes
+  const mergedParams = useMemo(() => {
+    return {
+      state: location.state,
+      city: location.city,
+      ...filters,
+    };
+  }, [location, filters]); // Only re-run when location or filters change
+
+  // Fetch stays whenever mergedParams changes
   useEffect(() => {
+
+    console.log('useEffect triggered');
+    console.log('Location:', location);
+    console.log('Filters:', filters);
+
     const doFetch = async () => {
-      // Combine location + filters into a single object
-      const mergedParams = {
-        state: location.state,
-        city: location.city,
-        ...filters,
-      };
       console.log("API Params from ListingStay:", mergedParams);
 
       setLoading(true);
@@ -44,7 +55,7 @@ const ListingStay: FC = () => {
       }
     };
     doFetch();
-  }, [location, filters]); // re-fetch whenever location or filters changes
+  }, [mergedParams]); // re-fetch whenever location or filters changes
 
   function handleClearAll() {
     // clearing filters in context
@@ -53,6 +64,8 @@ const ListingStay: FC = () => {
       priceRange: [0, 20000],
       amenities: [],
     });
+    setLocation({ state: "", city: "" });
+
   }
 
   function onFilterChange(newFilterPart: any) {
@@ -78,7 +91,7 @@ const ListingStay: FC = () => {
         <SectionHeroArchivePage currentPage="Stays" currentTab="Stays" />
       </div>
 
-      <div className="nc-SectionGridFilterCard container pb-24 lg:pb-28">
+      <div className="lg:block hidden container pb-24 lg:pb-28">
         {/* Show the selected filters */}
         <div className="mb-8">
           <h3 className="text-2xl font-semibold text-gray-900 dark:text-neutral-100">Selected Filters</h3>
@@ -93,8 +106,15 @@ const ListingStay: FC = () => {
               <strong>Amenities:</strong> {selectedAmenities}
             </p>
             <p className="text-lg text-neutral-700 dark:text-neutral-300">
-              <strong>Location:</strong> {location.city}, {location.state}
+              <strong>Location:</strong>{" "}
+              {location.state && location.city
+                ? `${location.city}, ${location.state}`
+                : location.city || location.state
+                  ? location.city || location.state
+                  : "None selected"}
             </p>
+
+
           </div>
         </div>
 
@@ -113,6 +133,9 @@ const ListingStay: FC = () => {
             }}
           />
         </div>
+      </div>
+
+      <div className="nc-SectionGridFilterCard container pb-24 lg:pb-28 ">
 
         {stays.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

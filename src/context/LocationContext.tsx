@@ -116,12 +116,37 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
     setLocationState({ state, city });
   };
 
+  // const setFilters = (newFilters: any) => {
+  //   setFiltersState((prevFilters) => ({
+  //     ...prevFilters,
+  //     ...newFilters,
+  //   }));
+  // };
+
+  // const setLocation = ({ state, city }: { state: string; city: string }) => {
+  //   console.log("Location context updated:", { state, city });
+  //   setLocationState({ state, city });
+  // };
+  
+  // const setFilters = (newFilters: any) => {
+  //   console.log("Filters context updated:", newFilters);
+  //   setFiltersState((prevFilters) => ({
+  //     ...prevFilters,
+  //     ...newFilters,
+  //   }));
+  // };
+  
   const setFilters = (newFilters: any) => {
-    setFiltersState((prevFilters) => ({
-      ...prevFilters,
-      ...newFilters,
-    }));
+    // Only update if filters have changed
+    if (JSON.stringify(newFilters) !== JSON.stringify(filters)) {
+      console.log("Filters context updated:", newFilters);
+      setFiltersState((prevFilters) => ({
+        ...prevFilters,
+        ...newFilters,
+      }));
+    }
   };
+  
 
   return (
     <FilterContext.Provider value={{ location, filters, setLocation, setFilters }}>

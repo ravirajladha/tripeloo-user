@@ -53,10 +53,10 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
       setGuestChildrenInputValue(value);
       newValue.guestChildren = value;
     }
-    if (type === "guestInfants") {
-      setGuestInfantsInputValue(value);
-      newValue.guestInfants = value;
-    }
+    // if (type === "guestInfants") {
+    //   setGuestInfantsInputValue(value);
+    //   newValue.guestInfants = value;
+    // }
   };
 
   const totalGuests =
@@ -75,9 +75,8 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
             >
               <span>{`${totalGuests || ""} Guests`}</span>
               <ChevronDownIcon
-                className={`${
-                  open ? "" : "text-opacity-70"
-                } ml-2 h-4 w-4 group-hover:text-opacity-80 transition ease-in-out duration-150`}
+                className={`${open ? "" : "text-opacity-70"
+                  } ml-2 h-4 w-4 group-hover:text-opacity-80 transition ease-in-out duration-150`}
                 aria-hidden="true"
               />
             </Popover.Button>
@@ -109,14 +108,14 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
                   desc="Ages 2–12"
                 />
 
-                <NcInputNumber
+                {/* <NcInputNumber
                   className="w-full mt-6"
                   defaultValue={guestInfantsInputValue}
                   onChange={(value) => handleChangeData(value, "guestInfants")}
                   max={4}
                   label="Infants"
                   desc="Ages 0–2"
-                />
+                /> */}
               </Popover.Panel>
             </Transition>
           </>
@@ -137,9 +136,8 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
             >
               <span>{`${flightClassState}`}</span>
               <ChevronDownIcon
-                className={`${
-                  open ? "" : "text-opacity-70"
-                } ml-2 h-4 w-4 group-hover:text-opacity-80 transition ease-in-out duration-150`}
+                className={`${open ? "" : "text-opacity-70"
+                  } ml-2 h-4 w-4 group-hover:text-opacity-80 transition ease-in-out duration-150`}
                 aria-hidden="true"
               />
             </Popover.Button>
@@ -183,24 +181,22 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
     return (
       <div className=" py-5 [ nc-hero-field-padding ] flex flex-row flex-wrap border-b border-neutral-100 dark:border-neutral-700">
         <div
-          className={`py-1.5 px-4 flex items-center rounded-full font-medium text-xs cursor-pointer mr-2 my-1 sm:mr-3 ${
-            dropOffLocationType === "lorem 1"
+          className={`py-1.5 px-4 flex items-center rounded-full font-medium text-xs cursor-pointer mr-2 my-1 sm:mr-3 ${dropOffLocationType === "lorem 1"
               ? "bg-black shadow-black/10 shadow-lg text-white"
               : "border border-neutral-300 dark:border-neutral-700"
-          }`}
+            }`}
           onClick={(e) => setDropOffLocationType("lorem 1")}
         >
           lorem 1
         </div>
         <div
-          className={`py-1.5 px-4 flex items-center rounded-full font-medium text-xs cursor-pointer mr-2 my-1 sm:mr-3 ${
-            dropOffLocationType === "lorem 2"
+          className={`py-1.5 px-4 flex items-center rounded-full font-medium text-xs cursor-pointer mr-2 my-1 sm:mr-3 ${dropOffLocationType === "lorem 2"
               ? "bg-black text-white shadow-black/10 shadow-lg"
               : "border border-neutral-300 dark:border-neutral-700"
-          }`}
+            }`}
           onClick={(e) => setDropOffLocationType("lorem 2")}
         >
-       lorem 2
+          lorem 2
         </div>
 
         <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8 mr-2 my-1 sm:mr-3"></div>
@@ -224,7 +220,7 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
             placeHolder="Activity Location"
             desc="Where do you want to?"
             className="flex-1"
-             divHideVerticalLineClass=" -inset-x-0.5"
+            divHideVerticalLineClass=" -inset-x-0.5"
           />
           {/* <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
          <LocationInput
@@ -235,10 +231,10 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
           />  */}
           <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
           {hasButtonSubmit && (
-       <div className="pr-2 mt-3">
-                  {/* <ButtonSubmit href="/" /> */}
-                </div>
-              )}
+            <div className="pr-2 mt-3">
+              {/* <ButtonSubmit href="/" /> */}
+            </div>
+          )}
         </div>
       </form>
     );

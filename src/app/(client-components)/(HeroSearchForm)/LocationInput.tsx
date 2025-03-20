@@ -3,8 +3,6 @@ import { fetchStatesAndCities } from "@/actions/fetchStatesCities"; // Ensure th
 import { MapPinIcon } from "@heroicons/react/24/solid";
 import { useFilter } from "../../../../src/context/LocationContext"; // Use the updated context
 
-
-// You can define this in the same file or import it from a types file
 export interface LocationInputProps {
   autoFocus?: boolean;
   placeHolder?: string;
@@ -12,7 +10,6 @@ export interface LocationInputProps {
   className?: string;
   divHideVerticalLineClass?: string;
 }
-
 
 const LocationInput: React.FC<LocationInputProps> = ({
   autoFocus = false,
@@ -25,8 +22,8 @@ const LocationInput: React.FC<LocationInputProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [value, setValue] = useState("");
-  const [showPopover, setShowPopover] = useState(autoFocus);
+  const [value, setValue] = useState<string>(""); // Manage input value
+  const [showPopover, setShowPopover] = useState<boolean>(autoFocus);
   const [stateCityPairs, setStateCityPairs] = useState<any[]>([]);
 
   // Fetch states and cities on component mount
@@ -43,24 +40,21 @@ const LocationInput: React.FC<LocationInputProps> = ({
     getStatesAndCities();
   }, []);
 
-  const handleSelectLocation1 = (state: string, city: string) => {
-    setValue(`${city}, ${state}`);
-    setShowPopover(false);
-    setLocation({ state, city }); // Update location context with the selected state and city
-  };
-
- 
-
-
+  // Set the initial value of the input to the current location from context
+  useEffect(() => {
+    if (location.state && location.city) {
+      setValue(`${location.city}, ${location.state}`);
+    }
+  }, [location]); // Update the input value when the location changes
 
   const handleSelectLocation = (selectedState: string, selectedCity: string) => {
     setValue(`${selectedCity}, ${selectedState}`);
     setShowPopover(false);
-  
+
     // Must pass { state, city } if setLocation signature is setLocation({ state, city })
     setLocation({ state: selectedState, city: selectedCity });
   };
-  
+
   const renderStateCityPairs = () => {
     return stateCityPairs.map((pair, index) => (
       <div
@@ -97,7 +91,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
             }}
             ref={inputRef}
           />
-          <span className="block mt-0.5 text-sm text-neutral-400 font-light ">
+          <span className="block mt-0.5 text-sm text-neutral-400 font-light">
             <span className="line-clamp-1">{!!value ? placeHolder : desc}</span>
           </span>
         </div>

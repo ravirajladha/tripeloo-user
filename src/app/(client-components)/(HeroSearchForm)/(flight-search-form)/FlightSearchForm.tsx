@@ -70,10 +70,10 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
       setGuestChildrenInputValue(value);
       newValue.guestChildren = value;
     }
-    if (type === "guestInfants") {
-      setGuestInfantsInputValue(value);
-      newValue.guestInfants = value;
-    }
+    // if (type === "guestInfants") {
+    //   setGuestInfantsInputValue(value);
+    //   newValue.guestInfants = value;
+    // }
   };
 
   const totalGuests =
@@ -133,7 +133,7 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
                   label="Children"
                   desc="Ages 2-12"
                 />
-
+{/* 
                 <NcInputNumber
                   className="w-full mt-6"
                   defaultValue={guestInfantsInputValue}
@@ -141,7 +141,7 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
                   max={4}
                   label="Infants"
                   desc="Ages 0–2"
-                />
+                /> */}
               </Popover.Panel>
             </Transition>
           </>
@@ -299,7 +299,7 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
             desc="Which Location are you searching for?"
             className="flex-1"
           />
-          <GuestsInput className="flex-1" />
+          {/* <GuestsInput className="flex-1" /> */}
           <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
           {hasButtonSubmit && (
     <div className="pr-2 mt-3">

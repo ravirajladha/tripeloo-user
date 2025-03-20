@@ -343,8 +343,8 @@ interface TabFiltersProps {
 
 
 	return (
-		<div className="flex lg:space-x-4">
-			<div className="hidden space-x-4 lg:flex">
+		<div className="flex sm:space-x-4">
+			<div className="hidden space-x-4 sm:flex">
 				{renderTabsTypeOfPlace()}
 				{/* {renderTabsPriceRage()} */}
 				{renderPriceRange()}

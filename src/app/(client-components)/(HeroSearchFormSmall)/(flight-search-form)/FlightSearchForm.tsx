@@ -49,10 +49,10 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({}) => {
       setGuestChildrenInputValue(value);
       newValue.guestChildren = value;
     }
-    if (type === "guestInfants") {
-      setGuestInfantsInputValue(value);
-      newValue.guestInfants = value;
-    }
+    // if (type === "guestInfants") {
+    //   setGuestInfantsInputValue(value);
+    //   newValue.guestInfants = value;
+    // }
   };
 
   const totalGuests =
@@ -105,7 +105,7 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({}) => {
                     desc="Ages 2–12"
                   />
 
-                  <NcInputNumber
+                  {/* <NcInputNumber
                     className="w-full mt-6"
                     defaultValue={guestInfantsInputValue}
                     onChange={(value) =>
@@ -114,7 +114,7 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({}) => {
                     max={4}
                     label="Infants"
                     desc="Ages 0–2"
-                  />
+                  /> */}
                 </Popover.Panel>
               </Transition>
             </>

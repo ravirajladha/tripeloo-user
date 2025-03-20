@@ -16,10 +16,10 @@ const PAGES_REAL_ESTATE: PathName[] = [
 ];
 
 const HeroSearchForm2MobileFactory = () => {
-  const pathname = usePathname();
-  if (PAGES_REAL_ESTATE.includes(pathname as PathName)) {
-    return <HeroSearchForm2RealEstateMobile />;
-  }
+  // const pathname = usePathname();
+  // if (PAGES_REAL_ESTATE.includes(pathname as PathName)) {
+  //   return <HeroSearchForm2RealEstateMobile />;
+  // }
   return <HeroSearchForm2Mobile />;
 };
 
