@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+"use client"
+import React, { FC, useState } from "react";
 import ButtonCircle from "@/shared/ButtonCircle";
 import rightImg from "@/images/SVG-subcribe2.png";
 import Badge from "@/shared/Badge";
@@ -10,6 +11,20 @@ export interface SectionSubscribe2Props {
 }
 
 const SectionSubscribe2: FC<SectionSubscribe2Props> = ({ className = "" }) => {
+  const [email, setEmail] = useState(""); // Email state
+  const [successMessage, setSuccessMessage] = useState(""); // State to manage success message
+
+  // Handle form submit
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Simulate saving the email and show success message
+    setSuccessMessage("Thank you for subscribing! You will receive our newsletter soon.");
+    
+    // Reset email input after submission
+    setEmail("");
+  };
+
   return (
     <div
       className={`nc-SectionSubscribe2 relative flex flex-col lg:flex-row lg:items-center ${className}`}
@@ -35,12 +50,16 @@ const SectionSubscribe2: FC<SectionSubscribe2Props> = ({ className = "" }) => {
             </span>
           </li>
         </ul>
-        <form className="mt-10 relative max-w-sm">
+        
+        {/* Form */}
+        <form className="mt-10 relative max-w-sm" onSubmit={handleSubmit}>
           <Input
             required
             aria-required
             placeholder="Enter your email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             rounded="rounded-full"
             sizeClass="h-12 px-5 py-3"
           />
@@ -52,7 +71,16 @@ const SectionSubscribe2: FC<SectionSubscribe2Props> = ({ className = "" }) => {
             <i className="las la-arrow-right text-xl"></i>
           </ButtonCircle>
         </form>
+
+        {/* Display the success message */}
+        {successMessage && (
+          <div className="mt-4 text-green-600 font-semibold">
+            {successMessage}
+          </div>
+        )}
       </div>
+      
+      {/* Right image */}
       <div className="flex-grow">
         <Image alt="" src={rightImg} />
       </div>

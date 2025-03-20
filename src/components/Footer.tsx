@@ -18,7 +18,7 @@ const widgetMenus: WidgetFooterMenu[] = [
     title: "Getting started",
     menus: [
       { href: "/", label: "Home" },
-      { href: "/stay-listing", label: "Stay Listings" },
+      { href: "/listing-stay", label: "Stay Listings" },
    
     ],
   },
@@ -30,7 +30,7 @@ const widgetMenus: WidgetFooterMenu[] = [
       { href: "#", label: "My Booking" },
       { href: "#", label: "My Post" },
       { href: "#", label: "My Profile" },
-      { href: "#", label: "" },
+
 
   
     ],
@@ -39,14 +39,12 @@ const widgetMenus: WidgetFooterMenu[] = [
     id: "2",
     title: "About Us",
     menus: [
-      { href: "#", label: "About Us" },
-      { href: "#", label: "Terms of Services" },
-      { href: "#", label: "User Agreement" },
-      { href: "#", label: "Privacy" },
-      { href: "#", label: "Youtube Channel" },
-      { href: "#", label: "Twitter Handle" },
-      { href: "#", label: "Facebook Page" },
-      { href: "#", label: "Customer Support" },
+      { href: "/", label: "About Us" },
+      { href: "/term-and-conditions", label: "Terms of Services" },
+ 
+      { href: "/privacy-and-policy", label: "Privacy & Policy" },
+
+      { href: "/contact", label: "Customer Support" },
 
 
     ],
@@ -55,12 +53,15 @@ const widgetMenus: WidgetFooterMenu[] = [
     id: "4",
     title: "Business and Support",
     menus: [
-      { href: "#", label: "Contact Us" },
-      { href: "#", label: "Become Travel Provider" },
+      { href: "/contact", label: "Contact Us" },
+      { href: "/subscription", label: "Become Travel Provider" },
  
     ],
   },
 ];
+
+
+
 
 
 const Footer: React.FC = () => {

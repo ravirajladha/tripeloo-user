@@ -1,3 +1,4 @@
+"use client"
 import { CheckIcon } from "@heroicons/react/24/solid";
 import React, { FC } from "react";
 import ButtonPrimary from "@/shared/ButtonPrimary";
@@ -12,6 +13,7 @@ export interface PricingItem {
   desc: string;
   per: string;
   features: string[];
+  staysLimit: number; // Added number of stays for each plan
 }
 
 const pricings: PricingItem[] = [
@@ -20,34 +22,37 @@ const pricings: PricingItem[] = [
     name: "Starter",
     pricing: "Rs 500",
     per: "/mo",
+    staysLimit: 2,
     features: ["Automated Reporting", "Faster Processing", "Customizations"],
-    desc: ` Literally you probably haven't heard of them jean shorts.`,
+    desc: "Get 2 stays for Rs 500 per month.",
   },
   {
     isPopular: true,
     name: "Basic",
-    pricing: "Rs 1500",
+    pricing: "Rs 750",
     per: "/mo",
+    staysLimit: 5,
     features: [
       "Everything in Starter",
-      "100 stays",
+      "5 stays per month",
       "Progress Reports",
       "Premium Support",
     ],
-    desc: ` Literally you probably haven't heard of them jean shorts.`,
+    desc: "Get 5 stays for Rs 750 per month.",
   },
   {
     isPopular: false,
     name: "Plus",
-    pricing: "Rs 2500",
+    pricing: "Rs 1500",
     per: "/mo",
+    staysLimit: Infinity, // Unlimited stays
     features: [
       "Everything in Basic",
-      "Unlimited Builds",
+      "Unlimited Stays",
       "Advanced Analytics",
       "Evaluations",
     ],
-    desc: ` Literally you probably haven't heard of them jean shorts.`,
+    desc: "Unlimited stays for Rs 1500 per month.",
   },
 ];
 
@@ -92,9 +97,21 @@ const PageSubcription: FC<PageSubcriptionProps> = () => {
         </nav>
         <div className="flex flex-col mt-auto">
           {pricing.isPopular ? (
-            <ButtonPrimary>Submit</ButtonPrimary>
+            <ButtonPrimary
+              onClick={() => {
+                // After clicking, take the user to the admin page
+                window.location.href = "https://tripeloo-admin-v2.ravirajladha.com/";
+              }}
+            >
+              Submit
+            </ButtonPrimary>
           ) : (
-            <ButtonSecondary>
+            <ButtonSecondary
+              onClick={() => {
+                // After clicking, take the user to the admin page
+                window.location.href = "https://tripeloo-admin-v2.ravirajladha.com/";
+              }}
+            >
               <span className="font-medium">Submit</span>
             </ButtonSecondary>
           )}
@@ -114,7 +131,7 @@ const PageSubcription: FC<PageSubcriptionProps> = () => {
           Subscription
         </h2>
         <span className="block text-sm mt-2 text-neutral-700 sm:text-base dark:text-neutral-200">
-          Pricing to fit the needs of any companie size.
+          Pricing to fit the needs of any company size.
         </span>
       </header>
       <section className="text-neutral-600 text-sm md:text-base overflow-hidden">
