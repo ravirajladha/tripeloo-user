@@ -23,7 +23,7 @@ const SectionHero: FC<SectionHeroProps> = ({ className = "" }) => {
             Accompanying us, you have a trip full of experiences. With Tripeloo,
             booking accommodation, resort villas, hotels1
           </span>
-          <ButtonMain href="/listing-stay-map" sizeClass="px-5 py-4 sm:px-7">
+          <ButtonMain href="/listing-stay" sizeClass="px-5 py-4 sm:px-7">
             Start your search
           </ButtonMain>
         </div>

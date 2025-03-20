@@ -32,7 +32,7 @@ export const fetchAllPosts = async () => {
     if (typeof window === "undefined") return []; // ✅ Prevent execution on server
 
     const token = localStorage.getItem("accessToken"); // ✅ Get token inside function
-    const response = await axiosInstance.get("/api/v1/users/post/all", {
+    const response = await axiosInstance.get("/api/v1/post/all", {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });
