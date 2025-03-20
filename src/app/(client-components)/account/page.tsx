@@ -7,6 +7,8 @@ import ButtonPrimary from '@/shared/ButtonPrimary'
 import Input from '@/shared/Input'
 import Select from '@/shared/Select'
 import Textarea from '@/shared/Textarea'
+import avatar5 from "@/images/avatars/Image-5.png";
+
 import axios from 'axios'
 import getUserDetails from '@/actions/getUserDetails'
 import { useRouter } from 'next/navigation'
@@ -109,7 +111,11 @@ const AccountPage: FC<AccountPageProps> = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         <div className="flex flex-col items-center">
           <div className="relative w-32 h-32 mb-6 rounded-full overflow-hidden">
-          <Avatar sizeClass="w-32 h-32" imgUrl={user?.profileImage?.url || "/default-avatar.png"} />
+       
+<Avatar
+  sizeClass="w-32 h-32"
+  imgUrl={user?.profileImage?.url || avatar5} // Use avatar5 as the fallback image
+/>
           <div className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center bg-black bg-opacity-60 text-neutral-50">
               <svg
                 width="30"

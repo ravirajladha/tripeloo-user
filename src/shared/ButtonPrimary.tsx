@@ -10,7 +10,7 @@ const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
 }) => {
 	return (
 		<Button
-			className={`ttnc-ButtonPrimary text-neutral-50 hover:bg-[#D91C49] disabled:bg-opacity-70 ${className}`}
+			className={`ttnc-ButtonPrimary bg-[#D91C49]   text-neutral-50 hover:bg-[#D91C49] disabled:bg-opacity-70 ${className}`}
 			 // Apply the custom color
 			{...args}
 			onClick={onClick}

@@ -13,7 +13,7 @@ export const createPost = async ({ description, mediaFiles, stayId }: { descript
     mediaFiles.forEach((file) => formData.append("images", file));
 
     // ✅ API Request to Create Post
-    const response = await axiosInstance.post("/api/v1/users/post/create", formData, {
+    const response = await axiosInstance.post("/api/v1/post/create", formData, {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       withCredentials: true,
     });
@@ -50,7 +50,7 @@ export const addComment = async ({ postId, commentText }: { postId: string; comm
     const token = localStorage.getItem("accessToken"); // ✅ Get token inside function
 
     const response = await axiosInstance.post(
-      "/api/v1/users/post/createComment",
+      "/api/v1/post/createComment",
       { content: commentText, postId },
       { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
     );
@@ -68,7 +68,7 @@ export const likePost = async (postId: string) => {
     const token = localStorage.getItem("accessToken"); // ✅ Get token inside function
 
     const response = await axiosInstance.post(
-      `/api/v1/users/post/like/${postId}`, // ✅ Pass postId in URL
+      `/api/v1/post/like/${postId}`, // ✅ Pass postId in URL
       {},
       { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
     );

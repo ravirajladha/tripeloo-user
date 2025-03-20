@@ -88,7 +88,7 @@ const Profile = ({ params }: { params: Promise<{ profileId: string }> }) => {
 		  try {
 			if (profileId) {
 			  const res = await axios.get(
-				`${BACKEND_URL}/api/v1/users/post/user/${profileId}`,
+				`${BACKEND_URL}/api/v1/post/user/${profileId}`,
 				{
 				  withCredentials: true,
 				}
@@ -118,7 +118,7 @@ const Profile = ({ params }: { params: Promise<{ profileId: string }> }) => {
 	const handleAddComment = async (post: Post) => {
 		try {
 			const res = await axios.post(
-				`${BACKEND_URL}/api/v1/users/post/createComment`,
+				`${BACKEND_URL}/api/v1/post/createComment`,
 				{
 					content: commentText,
 					postId: post._id,
@@ -145,7 +145,7 @@ const Profile = ({ params }: { params: Promise<{ profileId: string }> }) => {
 	const handleLike = async (post: Post) => {
 		try {
 			const res = await axios.post(
-				`${BACKEND_URL}/api/v1/users/post/like`,
+				`${BACKEND_URL}/api/v1/post/like`,
 				{
 					postId: post._id,
 				},
@@ -293,10 +293,10 @@ const Profile = ({ params }: { params: Promise<{ profileId: string }> }) => {
 						<span>{post.comments.length} Comments</span>
 					</button>
 				</div>
-				<button className="flex items-center space-x-1">
+				{/* <button className="flex items-center space-x-1">
 					<FaShareAlt />
 					<span>Share</span>
-				</button>
+				</button> */}
 			</div>
 		)
 	}

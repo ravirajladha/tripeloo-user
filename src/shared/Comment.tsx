@@ -61,7 +61,7 @@ const Comment: FC<CommentProps> = ({
 
 	const createReply = async () => {
 		const res = await axios.post(
-			`${BACKEND_URL}/api/v1/users/comments/reply`,
+			`${BACKEND_URL}/api/v1/post/comment/reply`,
 			{
 				commentId: id,
 				content: reply,

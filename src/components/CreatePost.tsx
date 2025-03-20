@@ -110,27 +110,37 @@ const CreatePost = ({ setRefreshTrigger }: any) => {
         ))}
       </div>
 
-      <div className="mt-3 flex items-center gap-4">
-        {/* ✅ Upload Images */}
-        <label htmlFor="media-upload" className="cursor-pointer text-blue-500">
-          📷 Upload Images
-        </label>
-        <input type="file" id="media-upload" className="hidden" accept="image/*" multiple onChange={handleMediaChange} />
+      <div className="mt-3 flex items-center gap-4 justify-between">
+  {/* ✅ Upload Images */}
+  <label htmlFor="media-upload" className="cursor-pointer text-blue-500">
+    📷 Upload Images
+  </label>
+  <input 
+    type="file" 
+    id="media-upload" 
+    className="hidden" 
+    accept="image/*" 
+    multiple 
+    onChange={handleMediaChange} 
+  />
 
-        {/* ✅ Dropdown for Stay Selection */}
-        <select
-          className="border p-2 rounded-lg"
-          value={stayId}
-          onChange={(e) => setStayId(e.target.value)}
-        >
-          <option value="">Tag a Stay (Optional)</option>
-          {stays.map((stay) => (
-            <option key={stay._id} value={stay._id}>
-              {stay.title}
-            </option>
-          ))}
-        </select>
-      </div>
+  {/* ✅ Dropdown for Stay Selection */}
+  <div className="ml-auto">
+    <select
+      className="border p-2 rounded-lg"
+      value={stayId}
+      onChange={(e) => setStayId(e.target.value)}
+    >
+      <option value="">Tag a Stay (Optional)</option>
+      {stays.map((stay) => (
+        <option key={stay._id} value={stay._id}>
+          {stay.title}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
 
       {/* ✅ Post Button */}
       <div className="mt-4">

@@ -61,11 +61,13 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 	const [commentPost, setCommentPost] = useState<any>()
 	const [commentText, setCommentText] = useState('')
 	const [refreshTrigger, setRefreshTrigger] = useState(0)
+	const [mainImage, setMainImage] = useState("/default-placeholder.png");
 
 	const userToPass = user || { _id: '', username: '', email: '', fullName: '' }
 
 	const openModal = (post: Post) => {
 		setUser(post.user)
+		console.log(post, "post data");
 		setCommentPost(post)
 		setIsModalOpen(true)
 	}
@@ -123,10 +125,17 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 		setExpandedPostId((prevId) => (prevId === postId ? null : postId))
 	}
 
-	const [mainImage, setMainImage] = useState(
-		commentPost?.images?.length > 0 ? commentPost.images[0].url : "/default-placeholder.png"
-	);
+	// const [mainImage, setMainImage] = useState(
+	// 	commentPost?.images?.length > 0 ? commentPost.images[0].url : "/default-placeholder.png"
+	//   );
 
+	useEffect(() => {
+		if (commentPost?.images?.length > 0) {
+		  setMainImage(commentPost.images[0].url);  // Set to the first image of the new post
+		} else {
+		  setMainImage("/default-placeholder.png");  // Use default image if no images
+		}
+	  }, [commentPost]);  
 
 	const renderAuthor = (post: any) => {
 		const isExpanded = expandedPostId === post.id;
@@ -243,10 +252,10 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 						<span>{post.comments.length} Comments</span>
 					</button>
 				</div>
-				<button className="flex items-center space-x-1">
+				{/* <button className="flex items-center space-x-1">
 					<FaShareAlt />
 					<span>Share</span>
-				</button>
+				</button> */}
 			</div>
 		)
 	}
@@ -302,93 +311,94 @@ const PostSection: React.FC<SectionPostsProps> = ({ limit }) => {
 
 			{/* Modal for Comments */}
 			{isModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-					<div className="mx-auto h-[90vh] w-full max-w-6xl overflow-hidden rounded-lg bg-white shadow-lg dark:bg-neutral-900">
-						<div className="h-full overflow-y-auto">
-							<div className="flex h-full flex-col lg:flex-row">
-								{/* ✅ State to Store Main Image */}
-								<div className="p-6 lg:w-1/2">
-									{commentPost?.images?.length > 0 ? (
-										<div className="relative">
-											{/* ✅ Main Image Display */}
-											<Image
-												className="rounded-xl object-cover"
-												src={mainImage} // ✅ Show currently selected image
-												width={600}
-												height={600}
-												alt="Post Image"
-											/>
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="mx-auto h-[90vh] w-full max-w-6xl overflow-hidden rounded-lg bg-white shadow-lg dark:bg-neutral-900">
+      <div className="h-full overflow-y-auto">
+        <div className="flex h-full flex-col lg:flex-row">
+          {/* Main Image Display */}
+          <div className="p-6 lg:w-1/2">
+            {commentPost?.images?.length > 0 ? (
+              <div className="relative">
+                <Image
+                  className="rounded-xl object-cover"
+                  src={mainImage} // Show currently selected image
+                  width={400}
+                  height={400}
+                  alt={mainImage}
+                  loading="lazy" // Optional: lazy loading for images
+                />
 
-											{/* ✅ Image Thumbnails */}
-											<div className="mt-3 flex gap-2 overflow-x-auto">
-												{commentPost.images.map((img: any, index: any) => (
-													<Image
-														key={index}
-														className="w-16 h-16 rounded-md object-cover cursor-pointer border-2 hover:border-blue-500"
-														src={img.url}
-														width={60}
-														height={60}
-														alt={`Image ${index + 1}`}
-														onClick={() => setMainImage(img.url)} // ✅ Click to change main image
-													/>
-												))}
-											</div>
-										</div>
-									) : (
-										// <Image
-										// 	className="rounded-xl object-cover opacity-50"
-										// 	src="/default-placeholder.png"
-										// 	width={600}
-										// 	height={600}
-										// 	alt="No Image Available"
-										// />
-										<span>No image uploaded</span>
-									)}
-									<div className="mt-4">
-										<h2 className="text-xl font-semibold">Post Description</h2>
-										<p className="text-sm text-neutral-600 dark:text-neutral-300">
-											{commentPost?.description}
-										</p>
-									</div>
-								</div>
-								<div className="flex flex-col p-6 lg:w-1/2">
-									<div className="flex items-center justify-between">
-										<h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
-											Comments
-										</h3>
-										<button
-											className="text-neutral-500 hover:text-neutral-900"
-											onClick={closeModal}
-										>
-											X
-										</button>
-									</div>
-									<div className="max-h-[60vh] flex-grow overflow-y-auto">
-										{renderCommentLists(commentPost)}
-									</div>
-									<div className="mt-4">
-										<Textarea
-											value={commentText}
-											placeholder="Write a comment..."
-											onChange={(e) => setCommentText(e.target.value)}
-										/>
-										<div className="mt-2 space-x-3">
-											<ButtonSecondary onClick={closeModal}>
-												Close
-											</ButtonSecondary>
-											<ButtonSecondary
-												onClick={() => handleAddComment(commentPost)}
-											>
-												Add a comment
-											</ButtonSecondary>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			)}
+                {/* Image Thumbnails */}
+                <div className="mt-3 flex gap-2 overflow-x-auto py-2">
+                  {commentPost.images.map((img: any, index: any) => (
+                    <div key={index} className="relative">
+                      <Image
+                        className={`w-16 h-16 rounded-md object-cover cursor-pointer border-2 ${mainImage === img.url ? "border-blue-500" : "border-transparent"} hover:border-blue-500`}
+                        src={img.url}
+                        width={60}
+                        height={60}
+                        alt={`Image ${index + 1}`}
+                        onClick={() => setMainImage(img.url)} // Click to change main image
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <span>No image uploaded</span>
+            )}
+            <div className="mt-4">
+              {/* Post Description Section */}
+              {commentPost?.description && (
+                <div>
+                  <h2 className="text-xl font-semibold">Post Description</h2>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                    {commentPost?.description}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Comments Section */}
+          <div className="flex flex-col p-6 lg:w-1/2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+                Comments
+              </h3>
+              <button
+                className="text-neutral-500 hover:text-neutral-900"
+                onClick={closeModal}
+              >
+                X
+              </button>
+            </div>
+            <div className="max-h-[60vh] flex-grow overflow-y-auto">
+              {renderCommentLists(commentPost)}
+            </div>
+            <div className="mt-4">
+              <Textarea
+                value={commentText}
+                placeholder="Write a comment..."
+                onChange={(e) => setCommentText(e.target.value)}
+              />
+              <div className="mt-2 space-x-3">
+                <ButtonSecondary onClick={closeModal}>Close</ButtonSecondary>
+                <ButtonSecondary onClick={() => handleAddComment(commentPost)}>
+                  Add a comment
+                </ButtonSecondary>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
 		</div>
 	)
 }
