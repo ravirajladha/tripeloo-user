@@ -61,7 +61,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, closeModal }) => {
                 </span>
                 <Input
                   type="email"
-                  placeholder="example@example.com"
+                  placeholder="example@example.com1"
                   className="mt-1"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

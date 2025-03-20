@@ -142,6 +142,7 @@ const PageLogin: FC = () => {
 								type="password"
 								className="mt-1"
 								value={password}
+								placeholder="Enter Password"
 								onChange={(e) => {
 									setError('')
 									setPassword(e.target.value)

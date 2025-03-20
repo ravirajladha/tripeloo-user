@@ -127,6 +127,8 @@ const PageLogin: FC = () => {
 							<Input
 								type="password"
 								className="mt-1"
+								placeholder="Enter Password"
+
 								value={password}
 								onChange={(e) => {
 									setError('')

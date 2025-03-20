@@ -174,6 +174,8 @@ const PageSignUp: FC<PageSignUpProps> = () => {
 								type="password"
 								className="mt-1"
 								value={password}
+								placeholder="Enter Password"
+
 								onChange={(e) => {
 									setError('')
 									setPassword(e.target.value)
@@ -188,6 +190,8 @@ const PageSignUp: FC<PageSignUpProps> = () => {
 								type="password"
 								className="mt-1"
 								value={confirmPassword}
+								placeholder="Enter Confirm Password"
+
 								onChange={(e) => {
 									setError('')
 									setConfirmPassword(e.target.value)
