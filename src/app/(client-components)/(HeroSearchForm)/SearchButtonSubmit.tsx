@@ -1,21 +1,15 @@
-
-
-
-
-
-import { PathName } from "@/routers/types";
-import Link from "next/link";
+// ButtonSubmit.tsx
 import React, { FC } from "react";
 
 interface Props {
-  href?: PathName;
-}
-
-const ButtonSubmit: FC<Props> = ({ href = "/listing-stay-map" }) => {
+    onClick?: (e: React.FormEvent) => void;  // Modify this to accept an event
+  }
+  
+const SearchButtonSubmit: FC<Props> = ({ onClick }) => {
   return (
-    <Link
-      href={href}
+    <button
       type="button"
+      onClick={onClick}
       className="h-14 md:h-16 w-full md:w-16 rounded-full bg-primary-6000 hover:bg-primary-700 flex items-center justify-center text-neutral-50 focus:outline-none"
     >
       <span className="mr-3 md:hidden">Search</span>
@@ -33,8 +27,8 @@ const ButtonSubmit: FC<Props> = ({ href = "/listing-stay-map" }) => {
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
         />
       </svg>
-    </Link>
+    </button>
   );
 };
 
-export default ButtonSubmit;
+export default SearchButtonSubmit;

@@ -1,3 +1,4 @@
+"use client"
 import BackgroundSection from "@/components/BackgroundSection";
 import BgGlassmorphism from "@/components/BgGlassmorphism";
 import SectionGridAuthorBox from "@/components/SectionGridAuthorBox";
@@ -5,18 +6,23 @@ import SectionSliderNewCategories from "@/components/SectionSliderNewCategories"
 import SectionSubscribe2 from "@/components/SectionSubscribe2";
 import React, { ReactNode } from "react";
 import SectionHeroArchivePage from "../../(server-components)/Stays";
+// import { LocationProvider, useLocation } from "../../../../src/context/LocationContext"; // Ensure you import LocationProvider
+import { FilterProvider } from "../../../../src/context/LocationContext"; // Import the FilterProvider
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <div className={`nc-ListingStayPage relative `}>
       <BgGlassmorphism />
-
+      {/* the filter was present here, shifted to the page.tsx */}
       {/* SECTION HERO */}
-      <div className="container pt-10 pb-24 lg:pt-16 lg:pb-28">
-        <SectionHeroArchivePage currentPage="Activities" currentTab="Activities" />
-      </div>
+      {/* <div className="container pt-10 pb-24 lg:pt-16 lg:pb-28">
+        <SectionHeroArchivePage currentPage="Stays" currentTab="Stays" />
+      </div> */}
+      <FilterProvider>
 
-      {children}
+        {children}
+      </FilterProvider>
+
 
       <div className="container overflow-hidden">
         {/* SECTION 1 */}

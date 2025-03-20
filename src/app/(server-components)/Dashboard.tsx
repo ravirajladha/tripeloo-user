@@ -33,7 +33,7 @@ const SectionHero: FC<SectionHeroProps> = ({ className = "" }) => {
       </div>
 
       <div className="hidden lg:block z-10 mb-12 lg:mb-0 lg:-mt-40 w-full">
-        <HeroSearchForm />
+        {/* <HeroSearchForm /> */}
       </div>
     </div>
   );

@@ -86,11 +86,11 @@ const Header3: FC<Header3Props> = ({ className = "" }) => {
         }`}
       >
         <div className={`w-full max-w-4xl mx-auto pb-6`}>
-          <HeroSearchFormSmall
+          {/* <HeroSearchFormSmall
             defaultFieldFocus={showHeroSearch || undefined}
             onTabChange={setCurrentTab}
             defaultTab={currentTab}
-          />
+          /> */}
         </div>
       </div>
     );
@@ -151,7 +151,8 @@ const Header3: FC<Header3Props> = ({ className = "" }) => {
       ></div>
       {showHeroSearch && <div id="nc-Header-3-anchor"></div>}
       <header ref={headerInnerRef} className={`sticky top-0 z-40 ${className}`}>
-        <div
+        {/* commented before starting on the filter work */}
+        {/* <div
           className={`bg-white dark:bg-neutral-900 absolute h-full inset-x-0 top-0 transition-transform will-change-[transform,opacity]
           ${showHeroSearch ? "duration-75" : ""} 
           ${
@@ -161,7 +162,7 @@ const Header3: FC<Header3Props> = ({ className = "" }) => {
                 : "scale-y-[3.4]"
               : ""
           }`}
-        ></div>
+        ></div> */}
         <div className="relative px-4 lg:container h-[88px] flex">
           <div className="flex-1 flex justify-between">
             {/* Logo (lg+) */}

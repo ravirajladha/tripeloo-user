@@ -9,7 +9,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { PathName } from "@/routers/types";
 import Link from "next/link";
 import Header from "./Header";
-import Header3 from "./Header3";
+// import Header3 from "./Header3";
 import { usePathname } from "next/navigation";
 import { useThemeMode } from "@/utils/useThemeMode";
 

@@ -25,7 +25,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
 				<div className="min-h-screen w-full max-w-[1184px] flex-shrink-0 xl:w-[60%] xl:px-8 2xl:w-[60%]">
 					<Heading2 className="!mb-8" />
 					<div className="mb-8 lg:mb-11">
-						<TabFilters />
+						{/* <TabFilters /> */}
 					</div>
 					<div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 2xl:gap-x-6">
 						{/* {DEMO_STAYS.map((item) => (

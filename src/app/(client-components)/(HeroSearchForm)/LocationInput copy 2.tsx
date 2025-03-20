@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { fetchStatesAndCities } from "@/actions/fetchStatesCities"; // Ensure this function calls the backend API
+import { fetchStatesAndCities } from "@/actions/fetchStatesCities"; // Make sure this function calls the backend API
 import { MapPinIcon } from "@heroicons/react/24/solid";
-import { useFilter } from "../../../../src/context/LocationContext"; // Use the updated context
 
-
-// You can define this in the same file or import it from a types file
-export interface LocationInputProps {
+interface LocationInputProps {
   autoFocus?: boolean;
   placeHolder?: string;
   desc?: string;
   className?: string;
   divHideVerticalLineClass?: string;
 }
-
 
 const LocationInput: React.FC<LocationInputProps> = ({
   autoFocus = false,
@@ -21,13 +17,12 @@ const LocationInput: React.FC<LocationInputProps> = ({
   className = "nc-flex-1.5",
   divHideVerticalLineClass = "left-10 -right-0.5",
 }) => {
-  const { location, setLocation, filters, setFilters } = useFilter(); // Use context
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [value, setValue] = useState("");
   const [showPopover, setShowPopover] = useState(autoFocus);
-  const [stateCityPairs, setStateCityPairs] = useState<any[]>([]);
+  const [stateCityPairs, setStateCityPairs] = useState<any[]>([]); // Now an array of state-city pairs
 
   // Fetch states and cities on component mount
   useEffect(() => {
@@ -43,24 +38,11 @@ const LocationInput: React.FC<LocationInputProps> = ({
     getStatesAndCities();
   }, []);
 
-  const handleSelectLocation1 = (state: string, city: string) => {
+  const handleSelectLocation = (state: string, city: string) => {
     setValue(`${city}, ${state}`);
     setShowPopover(false);
-    setLocation({ state, city }); // Update location context with the selected state and city
   };
 
- 
-
-
-
-  const handleSelectLocation = (selectedState: string, selectedCity: string) => {
-    setValue(`${selectedCity}, ${selectedState}`);
-    setShowPopover(false);
-  
-    // Must pass { state, city } if setLocation signature is setLocation({ state, city })
-    setLocation({ state: selectedState, city: selectedCity });
-  };
-  
   const renderStateCityPairs = () => {
     return stateCityPairs.map((pair, index) => (
       <div

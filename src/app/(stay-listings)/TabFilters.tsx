@@ -1,4 +1,5 @@
 'use client'
+import { FC } from 'react'; // Import FC (FunctionComponent) from React
 
 import { Fragment, useState } from 'react'
 import {
@@ -19,101 +20,171 @@ import Slider from 'rc-slider'
 import convertNumbThousand from '@/utils/convertNumbThousand'
 
 // DEMO DATA
-const typeOfPaces = [
+const typeOfPlaces = [
 	{
-		name: 'Entire place',
-		description: 'Have a place to yourself',
+		name: 'Standard rooms',
+		description: 'A comfortable room with basic amenities.',
 	},
 	{
-		name: 'Private room',
-		description: 'Have your own room and share some common spaces',
+		name: 'Suites',
+		description: 'A luxurious room with additional space and premium features.',
 	},
 	{
-		name: 'Hotel room',
-		description:
-			'Have a private or shared room in a boutique hotel, hostel, and more',
+		name: 'Deluxe rooms',
+		description: 'A higher-end room with more space and better amenities.',
 	},
 	{
-		name: 'Shared room',
-		description: 'Stay in a shared space, like a common room',
+		name: 'Villas',
+		description: 'Private and spacious homes for a more exclusive experience.',
 	},
-]
-
-const moreFilter1 = [
-	{ name: 'Kitchen', defaultChecked: true },
-	{ name: 'Air conditioning', defaultChecked: true },
-	{ name: 'Heating' },
-	{ name: 'Dryer' },
-	{ name: 'Washer' },
-	{ name: 'Wifi' },
-	{ name: 'Indoor fireplace' },
-	{ name: 'Breakfast' },
-	{ name: 'Hair dryer' },
-	{ name: ' Dedicated workspace' },
-]
-
-const moreFilter2 = [
-	{ name: ' Free parking on premise' },
-	{ name: 'Hot tub' },
-	{ name: 'Gym' },
-	{ name: ' Pool' },
-	{ name: ' EV charger' },
-]
-
-const moreFilter3 = [
-	{ name: ' House' },
-	{ name: 'Bed and breakfast' },
-	{ name: 'Apartment', defaultChecked: true },
-	{ name: ' Boutique hotel' },
-	{ name: ' Bungalow' },
-	{ name: ' Chalet', defaultChecked: true },
-	{ name: ' Condominium', defaultChecked: true },
-	{ name: ' Cottage' },
-	{ name: ' Guest suite' },
-	{ name: ' Guesthouse' },
-]
-
-const moreFilter4 = [{ name: ' Pets allowed' }, { name: 'Smoking allowed' }]
-
-const TabFilters = () => {
-	const [isOpenMoreFilter, setisOpenMoreFilter] = useState(false)
-	const [isOpenMoreFilterMobile, setisOpenMoreFilterMobile] = useState(false)
-	const [rangePrices, setRangePrices] = useState([0, 20000])
-
-	//
-	const closeModalMoreFilter = () => setisOpenMoreFilter(false)
-	const openModalMoreFilter = () => setisOpenMoreFilter(true)
-	//
+	{
+		name: 'Bungalows',
+		description: 'Standalone homes often in picturesque locations for more privacy.',
+	},
+	{
+		name: 'Overwater Bungalows',
+		description: 'A luxurious stay on the water with stunning views.',
+	},
+	{
+		name: 'Homestay',
+		description: 'A room or house where the host lives on the property, offering a more personal experience.',
+	},
+	{
+		name: 'Cottage',
+		description: 'A small and cozy home typically in rural or natural settings.',
+	},
+	{
+		name: 'Apartment',
+		description: 'A self-contained unit offering a home-like stay with all the comforts.',
+	},
+	{
+		name: 'Farmhouse',
+		description: 'A stay in a traditional farmhouse, ideal for nature lovers.',
+	},
+	{
+		name: 'Camp',
+		description: 'A camping experience often in tents or cabins, close to nature.',
+	},
+	{
+		name: 'Beach hut',
+		description: 'A small, rustic dwelling near the beach, often with simple amenities.',
+	},
+];
 
 
-	const renderXClear = () => {
-		return (
-			<span className="ml-3 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-primary-500 text-white">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					className="h-3 w-3"
-					viewBox="0 0 20 20"
-					fill="currentColor"
-				>
-					<path
-						fillRule="evenodd"
-						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-						clipRule="evenodd"
-					/>
-				</svg>
-			</span>
-		)
-	}
+const standardAmenities = [
+	'WiFi',
+	'TV',
+	'Kitchen',
+	'Washing machine',
+	'Free parking on premises',
+	'Paid parking on premises',
+	'Air conditioning',
+	'Dedicated workspace',
+  ];
+  
+  const standoutAmenities = [
+	'Pool',
+	'Hot tub',
+	'Patio',
+	'BBQ grill',
+	'Outdoor dining area',
+	'Firepit',
+	'Pool table',
+	'Indoor fireplace',
+	'Piano',
+	'Exercise equipment',
+	'Lake access',
+	'Beach access',
+	'Ski-in/out',
+	'Outdoor shower',
+  ];
+  
+  const safetyItems = [
+	'Smoke alarm',
+	'First aid kit',
+	'Fire extinguisher',
+	'Carbon monoxide alarm',
+];
 
+
+interface TabFiltersProps {
+	onFilterChange: (filters: any) => void;
+	filterParams: any;
+  }
+  
+  const TabFilters: FC<TabFiltersProps> = ({ onFilterChange, filterParams }) => {
+	const [selectedStayTypes, setSelectedStayTypes] = useState<string[]>(filterParams.stayTypes || []);
+	const [rangePrices, setRangePrices] = useState([0, 20000]);
+	const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+	const [isOpenMoreFilter, setIsOpenMoreFilter] = useState(false);
+  
+	const handleStayTypeChange = (stayType: string, checked: boolean) => {
+	  if (checked) {
+		setSelectedStayTypes([...selectedStayTypes, stayType]);
+	  } else {
+		setSelectedStayTypes(selectedStayTypes.filter((type) => type !== stayType));
+	  }
+	};
+  
+	const handleAmenitiesChange = (amenity: string, checked: boolean) => {
+	  if (checked) {
+		setSelectedAmenities([...selectedAmenities, amenity]);
+	  } else {
+		setSelectedAmenities(selectedAmenities.filter((item) => item !== amenity));
+	  }
+	};
+  
+	const handlePriceChange = (price: number[]) => {
+	  setRangePrices(price);
+	};
+  
+	// Handle Apply for StayType
+	const handleApplyStayType = () => {
+		onFilterChange({
+		  ...filterParams, // Retain the existing filters
+		  stayTypes: selectedStayTypes,
+		});
+	  };
+	  
+	  const handleApplyPriceRange = () => {
+		onFilterChange({
+		  ...filterParams, // Retain the existing filters
+		  priceRange: rangePrices,
+		});
+	  };
+	  
+	  const handleApplyAmenities = () => {
+		onFilterChange({
+		  ...filterParams, // Retain the existing filters
+		  amenities: selectedAmenities,
+		});
+	  };
+  
+	const handleClearStayType = () => {
+	  setSelectedStayTypes([]);
+	  onFilterChange({ stayTypes: [] });
+	};
+  
+	const handleClearPriceRange = () => {
+	  setRangePrices([0, 20000]);
+	  onFilterChange({ priceRange: [0, 20000] });
+	};
+  
+	const handleClearAmenities = () => {
+	  setSelectedAmenities([]);
+	  onFilterChange({ amenities: [] });
+	};
+
+	
 	const renderTabsTypeOfPlace = () => {
 		return (
 			<Popover className="relative">
 				{({ open, close }) => (
 					<>
 						<PopoverButton
-							className={`flex items-center justify-center rounded-full border border-neutral-300 px-4 py-2 text-sm hover:border-neutral-400 focus:outline-none dark:border-neutral-700 dark:hover:border-neutral-6000 ${
-								open ? '!border-primary-500' : ''
-							}`}
+							className={`flex items-center justify-center rounded-full border border-neutral-300 px-4 py-2 text-sm hover:border-neutral-400 focus:outline-none dark:border-neutral-700 dark:hover:border-neutral-6000 ${open ? '!border-primary-500' : ''
+								}`}
 						>
 							<span>Type of Stay</span>
 							<i className="las la-angle-down ml-2"></i>
@@ -130,22 +201,28 @@ const TabFilters = () => {
 							<PopoverPanel className="absolute left-0 z-10 mt-3 w-screen max-w-sm px-4 sm:px-0 lg:max-w-md">
 								<div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-neutral-900">
 									<div className="relative flex flex-col space-y-5 px-5 py-6">
-										{typeOfPaces.map((item) => (
+										{typeOfPlaces.map((item) => (
 											<div key={item.name} className="">
 												<Checkbox
 													name={item.name}
 													label={item.name}
 													subLabel={item.description}
+													onChange={(checked: boolean) => handleStayTypeChange(item.name, checked)} // Use the boolean directly
+													defaultChecked={selectedStayTypes.includes(item.name)} // Mark as checked if already selected
 												/>
+
 											</div>
 										))}
+
+
+
 									</div>
 									<div className="flex items-center justify-between bg-neutral-50 p-5 dark:border-t dark:border-neutral-800 dark:bg-neutral-900">
-										<ButtonThird onClick={close} sizeClass="px-4 py-2 sm:px-5">
+										<ButtonThird onClick={handleClearStayType} sizeClass="px-4 py-2 sm:px-5">
 											Clear
 										</ButtonThird>
 										<ButtonPrimary
-											onClick={close}
+											onClick={() => { handleApplyStayType(); close(); }}
 											sizeClass="px-4 py-2 sm:px-5"
 										>
 											Apply
@@ -159,273 +236,122 @@ const TabFilters = () => {
 			</Popover>
 		)
 	}
-
-
-	const renderTabsPriceRage = () => {
-		return (
-			<Popover className="relative">
-				{({ open, close }) => (
-					<>
-						<PopoverButton
-							className={`flex items-center justify-center rounded-full border border-primary-500 bg-primary-50 px-4 py-2 text-sm text-primary-700 focus:outline-none`}
-						>
-							<span>
-								{`Rs${convertNumbThousand(
-									rangePrices[0],
-								)} - Rs${convertNumbThousand(rangePrices[1])}`}{' '}
-							</span>
-							{renderXClear()}
-						</PopoverButton>
-						<Transition
-							as={Fragment}
-							enter="transition ease-out duration-200"
-							enterFrom="opacity-0 translate-y-1"
-							enterTo="opacity-100 translate-y-0"
-							leave="transition ease-in duration-150"
-							leaveFrom="opacity-100 translate-y-0"
-							leaveTo="opacity-0 translate-y-1"
-						>
-							<PopoverPanel className="absolute left-0 z-10 mt-3 w-screen max-w-sm px-4 sm:px-0">
-								<div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-neutral-900">
-									<div className="relative flex flex-col space-y-8 px-5 py-6">
-										<div className="space-y-5">
-											<span className="font-medium">Price per day</span>
-											<Slider
-												range
-												className="text-red-400"
-												min={0}
-												max={2000}
-												defaultValue={[rangePrices[0], rangePrices[1]]}
-												allowCross={false}
-												onChange={(e) => setRangePrices(e as number[])}
-											/>
-										</div>
-
-										<div className="flex justify-between space-x-5">
-											<div>
-												<label
-													htmlFor="minPrice"
-													className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
-												>
-													Min price
-												</label>
-												<div className="relative mt-1 rounded-md">
-													<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-														<span className="text-neutral-500 sm:text-sm">
-															Rs 
-														</span>
-													</div>
-													<input
-														type="text"
-														name="minPrice"
-														disabled
-														id="minPrice"
-														className="block w-full rounded-full border-neutral-200 pl-7 pr-3 text-neutral-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-														value={rangePrices[0]}
-													/>
-												</div>
-											</div>
-											<div>
-												<label
-													htmlFor="maxPrice"
-													className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
-												>
-													Max price
-												</label>
-												<div className="relative mt-1 rounded-md">
-													<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-														<span className="text-neutral-500 sm:text-sm">
-															Rs
-														</span>
-													</div>
-													<input
-														type="text"
-														disabled
-														name="maxPrice"
-														id="maxPrice"
-														className="block w-full rounded-full border-neutral-200 pl-7 pr-3 text-neutral-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-														value={rangePrices[1]}
-													/>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div className="flex items-center justify-between bg-neutral-50 p-5 dark:border-t dark:border-neutral-800 dark:bg-neutral-900">
-										<ButtonThird onClick={close} sizeClass="px-4 py-2 sm:px-5">
-											Clear
-										</ButtonThird>
-										<ButtonPrimary
-											onClick={close}
-											sizeClass="px-4 py-2 sm:px-5"
-										>
-											Apply1
-										</ButtonPrimary>
-									</div>
-								</div>
-							</PopoverPanel>
-						</Transition>
-					</>
-				)}
-			</Popover>
-		)
-	}
-
-	const renderMoreFilterItem = (
-		data: {
-			name: string
-			defaultChecked?: boolean
-		}[],
-	) => {
-		const list1 = data.filter((_, i) => i < data.length / 2)
-		const list2 = data.filter((_, i) => i >= data.length / 2)
-		return (
-			<div className="grid grid-cols-2 gap-8">
-				<div className="flex flex-col space-y-5">
-					{list1.map((item) => (
-						<Checkbox
-							key={item.name}
-							name={item.name}
-							label={item.name}
-							defaultChecked={!!item.defaultChecked}
-						/>
-					))}
-				</div>
-				<div className="flex flex-col space-y-5">
-					{list2.map((item) => (
-						<Checkbox
-							key={item.name}
-							name={item.name}
-							label={item.name}
-							defaultChecked={!!item.defaultChecked}
-						/>
-					))}
-				</div>
-			</div>
-		)
-	}
-
-	const renderTabMoreFilter = () => {
-		return (
-			<div>
-				<div
-					className={`flex cursor-pointer items-center justify-center rounded-full border border-primary-500 bg-primary-50 px-4 py-2 text-sm text-primary-700 focus:outline-none`}
-					onClick={openModalMoreFilter}
-				>
-					<span>More filters (3)</span>
-					{renderXClear()}
-				</div>
-
-				<Transition appear show={isOpenMoreFilter} as={Fragment}>
-					<Dialog
-						as="div"
-						className="fixed inset-0 z-50 overflow-y-auto"
-						onClose={closeModalMoreFilter}
-					>
-						<div className="min-h-screen text-center">
-							<TransitionChild
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0"
-								enterTo="opacity-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100"
-								leaveTo="opacity-0"
-							>
-								<div className="fixed inset-0 bg-black bg-opacity-40 dark:bg-opacity-60" />
-							</TransitionChild>
-
-							{/* This element is to trick the browser into centering the modal contents. */}
-							<span
-								className="inline-block h-screen align-middle"
-								aria-hidden="true"
-							>
-								&#8203;
-							</span>
-							<TransitionChild
-								as={'div'}
-								className="inline-block h-screen w-full max-w-4xl px-2 py-8"
-								enter="ease-out duration-300"
-								enterFrom="opacity-0 scale-95"
-								enterTo="opacity-100 scale-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100 scale-100"
-								leaveTo="opacity-0 scale-95"
-							>
-								<div className="inline-flex h-full w-full max-w-4xl transform flex-col overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all dark:border dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100">
-									<div className="relative flex-shrink-0 border-b border-neutral-200 px-6 py-4 text-center dark:border-neutral-800">
-										<DialogTitle
-											as="h3"
-											className="text-lg font-medium leading-6 text-gray-900"
-										>
-											More filters
-										</DialogTitle>
-										<span className="absolute left-3 top-3">
-											<ButtonClose onClick={closeModalMoreFilter} />
-										</span>
-									</div>
-
-									<div className="flex-grow overflow-y-auto">
-										<div className="divide-y divide-neutral-200 px-10 dark:divide-neutral-800">
-											<div className="py-7">
-												<h3 className="text-xl font-medium">Amenities</h3>
-												<div className="relative mt-6">
-													{renderMoreFilterItem(moreFilter1)}
-												</div>
-											</div>
-											<div className="py-7">
-												<h3 className="text-xl font-medium">Facilities</h3>
-												<div className="relative mt-6">
-													{renderMoreFilterItem(moreFilter2)}
-												</div>
-											</div>
-											<div className="py-7">
-												<h3 className="text-xl font-medium">Property type</h3>
-												<div className="relative mt-6">
-													{renderMoreFilterItem(moreFilter3)}
-												</div>
-											</div>
-											<div className="py-7">
-												<h3 className="text-xl font-medium">House rules</h3>
-												<div className="relative mt-6">
-													{renderMoreFilterItem(moreFilter4)}
-												</div>
-											</div>
-										</div>
-									</div>
-
-									<div className="flex flex-shrink-0 items-center justify-between bg-neutral-50 p-6 dark:border-t dark:border-neutral-800 dark:bg-neutral-900">
-										<ButtonThird
-											onClick={closeModalMoreFilter}
-											sizeClass="px-4 py-2 sm:px-5"
-										>
-											Clear
-										</ButtonThird>
-										<ButtonPrimary
-											onClick={closeModalMoreFilter}
-											sizeClass="px-4 py-2 sm:px-5"
-										>
-											Apply
-										</ButtonPrimary>
-									</div>
-								</div>
-							</TransitionChild>
+	const renderPriceRange = () => (
+		<Popover className="relative">
+		  {({ open, close }) => (
+			<>
+			  <PopoverButton
+				className="flex items-center justify-center rounded-full border border-primary-500 bg-primary-50 px-4 py-2 text-sm text-primary-700"
+			  >
+				<span>{`Rs${convertNumbThousand(rangePrices[0])} - Rs${convertNumbThousand(rangePrices[1])}`}</span>
+			  </PopoverButton>
+			  <Transition
+				as={Fragment}
+				enter="transition ease-out duration-200"
+				enterFrom="opacity-0 translate-y-1"
+				enterTo="opacity-100 translate-y-0"
+				leave="transition ease-in duration-150"
+				leaveFrom="opacity-100 translate-y-0"
+				leaveTo="opacity-0 translate-y-1"
+			  >
+				<PopoverPanel className="absolute left-0 z-10 mt-3 w-screen max-w-sm px-4 sm:px-0 lg:max-w-md">
+				  <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-neutral-900">
+					<div className="relative flex flex-col space-y-8 px-5 py-6">
+					  <Slider
+						range
+						className="text-red-400"
+						min={0}
+						max={20000}
+						defaultValue={[rangePrices[0], rangePrices[1]]}
+						onChange={(e) => handlePriceChange(e as number[])}
+					  />
+					</div>
+					<div className="flex items-center justify-between bg-neutral-50 p-5 dark:border-t dark:border-neutral-800 dark:bg-neutral-900">
+					  <ButtonThird onClick={handleClearPriceRange} sizeClass="px-4 py-2 sm:px-5">Clear</ButtonThird>
+					  <ButtonPrimary onClick={() => { handleApplyPriceRange(); close(); }} sizeClass="px-4 py-2 sm:px-5">Apply</ButtonPrimary>
+					</div>
+				  </div>
+				</PopoverPanel>
+			  </Transition>
+			</>
+		  )}
+		</Popover>
+	  );
+	
+	  const renderAmenitiesFilter = () => (
+		<Popover className="relative">
+		  {({ open, close }) => (
+			<>
+			  <PopoverButton className="flex items-center justify-center rounded-full border border-neutral-300 px-4 py-2 text-sm">
+				<span>Amenities</span>
+			  </PopoverButton>
+			  <Transition
+				as={Fragment}
+				enter="transition ease-out duration-200"
+				enterFrom="opacity-0 translate-y-1"
+				enterTo="opacity-100 translate-y-0"
+				leave="transition ease-in duration-150"
+				leaveFrom="opacity-100 translate-y-0"
+				leaveTo="opacity-0 translate-y-1"
+			  >
+				<PopoverPanel className="absolute left-0 z-10 mt-3 w-screen max-w-sm px-4 sm:px-0 lg:max-w-md">
+				  <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl dark:border-neutral-700 dark:bg-neutral-900">
+					<div className="relative flex flex-col space-y-5 px-5 py-6">
+					  {standardAmenities.map((item) => (
+						<div key={item}>
+						  <Checkbox
+							name={item}
+							label={item}
+							onChange={(checked: boolean) => handleAmenitiesChange(item, checked)}
+							defaultChecked={selectedAmenities.includes(item)}
+						  />
 						</div>
-					</Dialog>
-				</Transition>
-			</div>
-		)
-	}
+					  ))}
+					  {standoutAmenities.map((item) => (
+						<div key={item}>
+						  <Checkbox
+							name={item}
+							label={item}
+							onChange={(checked: boolean) => handleAmenitiesChange(item, checked)}
+							defaultChecked={selectedAmenities.includes(item)}
+						  />
+						</div>
+					  ))}
+					  {safetyItems.map((item) => (
+						<div key={item}>
+						  <Checkbox
+							name={item}
+							label={item}
+							onChange={(checked: boolean) => handleAmenitiesChange(item, checked)}
+							defaultChecked={selectedAmenities.includes(item)}
+						  />
+						</div>
+					  ))}
+					</div>
+					<div className="flex items-center justify-between bg-neutral-50 p-5 dark:border-t dark:border-neutral-800 dark:bg-neutral-900">
+					  <ButtonThird onClick={handleClearAmenities} sizeClass="px-4 py-2 sm:px-5">Clear</ButtonThird>
+					  <ButtonPrimary onClick={() => { handleApplyAmenities(); close(); }} sizeClass="px-4 py-2 sm:px-5">Apply</ButtonPrimary>
+					</div>
+				  </div>
+				</PopoverPanel>
+			  </Transition>
+			</>
+		  )}
+		</Popover>
+	  );
+	
 
 
 	return (
 		<div className="flex lg:space-x-4">
 			<div className="hidden space-x-4 lg:flex">
 				{renderTabsTypeOfPlace()}
-				{renderTabsPriceRage()}
-				
-				{renderTabMoreFilter()}
+				{/* {renderTabsPriceRage()} */}
+				{renderPriceRange()}
+				{renderAmenitiesFilter()}
+
 			</div>
-	
+
 		</div>
 	)
 }

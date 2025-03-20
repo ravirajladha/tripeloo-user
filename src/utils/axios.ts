@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
       config.headers["X-User-Type"] = userType; // Attach user type in headers
     }
 
-    console.log("🚀 Axios Request Headers:", config.headers);
+    // console.log("🚀 Axios Request Headers:", config.headers);
     return config;
   },
   (error) => Promise.reject(error)

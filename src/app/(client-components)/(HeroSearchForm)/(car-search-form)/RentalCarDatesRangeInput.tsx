@@ -85,7 +85,7 @@ const RentalCarDatesRangeInput: FC<RentalCarDatesRangeInputProps> = ({
               {/* BUTTON SUBMIT OF FORM */}
               {hasButtonSubmit && (
                 <div className="pr-2 xl:pr-4">
-                  <ButtonSubmit href="/listing-stay" />
+                  {/* <ButtonSubmit href="/listing-stay" /> */}
                 </div>
               )}
             </div>

@@ -236,7 +236,7 @@ const FlightSearchForm: FC<FlightSearchFormProps> = ({ hasButtonSubmit = true })
           <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
           {hasButtonSubmit && (
        <div className="pr-2 mt-3">
-                  <ButtonSubmit href="/" />
+                  {/* <ButtonSubmit href="/" /> */}
                 </div>
               )}
         </div>

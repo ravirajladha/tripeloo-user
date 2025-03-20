@@ -19,7 +19,7 @@ const StayCard: FC<StayCardProps> = ({
   className = "",
   data,
 }) => {
-  console.log(data, "inside main stay card");
+  // console.log(data, "inside main stay card");
   // Ensure data is not undefined or null
   const {
     images = [{ url: "/placeholder-image.jpg" }], 

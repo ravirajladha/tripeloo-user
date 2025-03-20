@@ -31,7 +31,7 @@ const CreatePost = ({ setRefreshTrigger }: any) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const staysData = await fetchAllStays();
+        const staysData = await fetchAllStays({});
         setStays(staysData);
       } catch (error) {
         console.error("Error fetching stays:", error);
