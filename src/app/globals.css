@@ -76,7 +76,7 @@
 .availability-datepicker-wrapper .availability-day .default-price {
     font-size: 11px;
     font-weight: 600;
-    color: blue;
+    color: rgb(87, 87, 239);
     margin-top: 3px;
 }
 
@@ -152,7 +152,7 @@
 .stay-datepicker-wrapper .react-datepicker__day--selecting-range-start,
 .stay-datepicker-wrapper .react-datepicker__day--selecting-range-end {
     background-color: transparent !important;
-    color: inherit !important;
+    /* color: inherit !important; */
     border-radius: 0 !important;
 }
 

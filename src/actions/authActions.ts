@@ -22,6 +22,9 @@ export const loginUser = async (email: string, password: string, dispatch: any) 
       return { success: true, user: response.data.user };
     }
   } catch (error: any) {
-    return { success: false, error: error.response?.data?.error || "Invalid email or password" };
+  // Extract the specific error message from the backend response
+  const errorMessage =  error.response.data.message || "Invalid email or password2";
+  console.log("error from the loginside", error.response.data.message  );
+  return { success: false, error: errorMessage };
   }
 };

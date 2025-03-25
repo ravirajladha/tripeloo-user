@@ -1011,7 +1011,7 @@ const ListingStayDetailPage: FC = () => {
 
 
 
-					<button
+					{/* <button
 						className="absolute bottom-3 left-3 z-10 hidden rounded-xl bg-neutral-100 px-4 py-2 text-neutral-500 hover:bg-neutral-200 md:flex md:items-center md:justify-center"
 						onClick={handleOpenModalImageGallery}
 					>
@@ -1019,7 +1019,7 @@ const ListingStayDetailPage: FC = () => {
 						<span className="ml-2 text-sm font-medium text-neutral-800">
 							Show all photos
 						</span>
-					</button>
+					</button> */}
 				</div>
 			</header>
 

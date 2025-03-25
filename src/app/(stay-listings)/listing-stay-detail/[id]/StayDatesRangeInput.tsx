@@ -38,10 +38,10 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({ className = "flex-1
             }) || "Add dates"}
             {endDate
               ? " - " +
-                endDate?.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "2-digit",
-                })
+              endDate?.toLocaleDateString("en-US", {
+                month: "short",
+                day: "2-digit",
+              })
               : ""}
           </span>
           <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
@@ -57,9 +57,8 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({ className = "flex-1
       {({ open }) => (
         <>
           <Popover.Button
-            className={`flex-1 flex relative p-3 items-center space-x-3 focus:outline-none ${
-              open ? "shadow-lg" : ""
-            }`}
+            className={`flex-1 flex relative p-3 items-center space-x-3 focus:outline-none ${open ? "shadow-lg" : ""
+              }`}
           >
             {renderInput()}
             {startDate && open && (
@@ -97,25 +96,26 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({ className = "flex-1
               </div>
             </Popover.Panel> */}
             <Popover.Panel className="absolute left-auto xl:-right-10 right-0 z-10 mt-3 top-full w-screen max-w-sm px-4 sm:px-0 lg:max-w-3xl">
-  <div className="overflow-y-auto max-h-[400px] rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5 bg-white dark:bg-neutral-800 p-8 stay-datepicker-wrapper">
-    <DatePicker
-      selected={startDate}
-      onChange={onChangeDate}
-      startDate={startDate}
-      endDate={endDate}
-      selectsRange
-      monthsShown={2} // ✅ Ensure two months are stacked vertically
-      showPopperArrow={false}
-      inline
-      renderCustomHeader={(p) => (
-        <DatePickerCustomHeaderTwoMonth {...p} />
-      )}
-      renderDayContents={(day, date) => (
-        <DatePickerCustomDay dayOfMonth={day} date={date} />
-      )}
-    />
-  </div>
-</Popover.Panel>
+              <div className="overflow-y-auto max-h-[400px] rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5 bg-white dark:bg-neutral-800 p-8 stay-datepicker-wrapper">
+                <DatePicker
+                  selected={startDate}
+                  onChange={onChangeDate}
+                  startDate={startDate}
+                  endDate={endDate}
+                  selectsRange
+                  minDate={new Date()} 
+                  monthsShown={2} // ✅ Ensure two months are stacked vertically
+                  showPopperArrow={false}
+                  inline
+                  renderCustomHeader={(p) => (
+                    <DatePickerCustomHeaderTwoMonth {...p} />
+                  )}
+                  renderDayContents={(day, date) => (
+                    <DatePickerCustomDay dayOfMonth={day} date={date} />
+                  )}
+                />
+              </div>
+            </Popover.Panel>
 
           </Transition>
         </>
