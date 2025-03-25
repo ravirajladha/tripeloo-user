@@ -1,21 +1,23 @@
+// pages/checkout.tsx
+
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import axios from "axios";
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import StartRating from "@/components/StartRating";
 import Label from "@/components/Label";
 import Textarea from "@/shared/Textarea";
 import { useAppSelector } from "@/store/hook"; // Import Redux hooks
 import { createBooking } from "@/actions/bookingActions"; // Centralized booking API function
+import { getRoomTypeById } from "@/actions/roomTypeActions"; // New function to fetch room type
 
 const CheckOutPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const user = useAppSelector((state) => state.auth.user); // Fetch user from Redux store
-// console.log(user, "")
+
   // Extract details from query params
   const roomTypeId = searchParams.get("roomTypeId");
   const numRooms = Number(searchParams.get("numRooms")) || 1;
@@ -27,6 +29,49 @@ const CheckOutPage = () => {
 
   const [userMessage, setUserMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [roomType, setRoomType] = useState<any>(null);
+  const [stay, setStay] = useState<any>(null);
+  const [overallRating, setOverallRating] = useState<{
+    average_rating: number;
+    total_reviews: number;
+  }>({ average_rating: 0, total_reviews: 0 });
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch room type details
+  useEffect(() => {
+    const fetchRoomType = async () => {
+      if (!roomTypeId) return;
+
+      try {
+        const response = await getRoomTypeById(roomTypeId);
+        if (response.success) {
+          setRoomType(response.data.roomType);
+          setStay(response.data.stay);
+          setOverallRating(
+            response.data.overallRating || { average_rating: 0, total_reviews: 0 }
+          );
+        } else {
+          throw new Error(response.message || "Failed to fetch room type");
+        }
+      } catch (err: any) {
+        console.error("Error fetching room type:", err);
+        setError(err.message || "Failed to fetch room type details");
+      }
+    };
+
+    fetchRoomType();
+  }, [roomTypeId]);
+
+  // Format dates
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   // Function to handle booking confirmation
   const handleConfirmBooking = async () => {
@@ -50,16 +95,20 @@ const CheckOutPage = () => {
         userMessage,
       };
 
-      await createBooking(bookingData); // Call centralized booking function
+      const response = await createBooking(bookingData); // Call centralized booking function
       alert("Booking Confirmed!");
-      router.push("/"); // Redirect after successful booking
-    } catch (error) {
-      console.error("Booking Error", error);
-      alert("Booking failed. Try again.");
-    } finally {
+
+      // Redirect to chat page with bookingId
+      const bookingId = response.booking_id;
+      router.push(`/chat/${bookingId}`);
+    } catch (error: any) {
+      console.error("Booking Error:", error);
+      alert(error.message || "Booking failed. Try again.");
       setLoading(false);
     }
   };
+
+  if (error) return <div className="container mt-11 mb-24">Error: {error}</div>;
 
   return (
     <div className="container mt-11 mb-24 lg:mb-32 flex flex-col lg:flex-row">
@@ -67,17 +116,24 @@ const CheckOutPage = () => {
       <div className="w-full lg:w-3/5 xl:w-2/3 lg:pr-10">
         <div className="p-6 border rounded-lg shadow-lg">
           <h2 className="text-3xl font-semibold">Confirm Your Booking</h2>
-          <div className="mt-4 border-b pb-4">
-            <p className="text-lg font-medium">Room Type: {roomTypeId}</p>
+          <div className="mt-4 border-b pb-4 space-y-2">
+            {stay && (
+              <p className="text-lg font-medium">
+                Stay: {stay.title} ({stay.city_name})
+              </p>
+            )}
+            <p className="text-lg font-medium">
+              Room Type: {roomType?.title || roomTypeId}
+            </p>
             <p className="text-lg font-medium">
               Guests: {numAdults} Adults, {numChildren} Children
             </p>
             <p className="text-lg font-medium">Rooms: {numRooms}</p>
             <p className="text-lg font-medium">
-              Dates: {startDate} to {endDate}
+              Dates: {formatDate(startDate)} to {formatDate(endDate)}
             </p>
             <p className="text-lg font-semibold text-blue-600">
-              Total Price: ₹{totalPrice}
+              Total Price: ₹{totalPrice.toLocaleString()}
             </p>
           </div>
 
@@ -87,28 +143,47 @@ const CheckOutPage = () => {
               placeholder="Any special requests? (Optional)"
               value={userMessage}
               onChange={(e) => setUserMessage(e.target.value)}
+              className="mt-1"
             />
           </div>
 
-          <ButtonPrimary onClick={handleConfirmBooking} disabled={loading}>
+          <ButtonPrimary
+            onClick={handleConfirmBooking}
+            disabled={loading}
+            className="mt-6 bg-red-600 hover:bg-red-700"
+          >
             {loading ? "Processing..." : "Confirm Booking"}
           </ButtonPrimary>
         </div>
       </div>
 
       {/* RIGHT: Room Details */}
-      <div className="hidden lg:block w-full lg:w-2/5 xl:w-1/3 border rounded-lg shadow-lg p-6">
-        <div className="flex items-center space-x-4">
+      <div className="w-full lg:w-2/5 xl:w-1/3 border rounded-lg shadow-lg p-6 mt-6 lg:mt-0">
+        <div className="flex items-start space-x-4">
           <Image
-            src="https://images.pexels.com/photos/6373478/pexels-photo-6373478.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+            src={
+              roomType?.images?.[0]?.url ||
+              "https://images.pexels.com/photos/6373478/pexels-photo-6373478.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+            }
             alt="Room"
             width={100}
             height={80}
-            className="rounded-lg"
+            className="rounded-lg object-cover"
           />
-          <div>
+          <div className="flex-1">
             <p className="text-xl font-medium">Selected Room</p>
-            <StartRating />
+            <StartRating
+              point={overallRating.average_rating}
+              reviewCount={overallRating.total_reviews}
+              className="mt-1"
+            />
+            {roomType && (
+              <div className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 space-y-1">
+                <p>Beds: {roomType.beds || "N/A"}</p>
+                <p>Bedrooms: {roomType.bedrooms || "N/A"}</p>
+                <p>Baths: {roomType.baths || "N/A"}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

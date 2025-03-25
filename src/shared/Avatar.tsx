@@ -6,6 +6,8 @@ import Image, { StaticImageData } from "next/image";
 export interface AvatarProps {
   containerClassName?: string;
   sizeClass?: string;
+  width?: number;
+  height?: number;
   radius?: string;
   imgUrl?: string | StaticImageData;
   userName?: string;
@@ -16,6 +18,8 @@ export interface AvatarProps {
 const Avatar: FC<AvatarProps> = ({
   containerClassName = "ring-1 ring-white dark:ring-neutral-900",
   sizeClass = "h-6 w-6 text-sm",
+  width = 24,
+  height = 24,
   radius = "rounded-full",
   imgUrl = avatar1,
   userName,
@@ -31,6 +35,9 @@ const Avatar: FC<AvatarProps> = ({
     return avatarColors[backgroundIndex];
   };
 
+  // Add debugging logs
+  console.log("Avatar Props - width:", width, "height:", height, "imgUrl:", url);
+
   return (
     <div
       className={`wil-avatar relative flex-shrink-0 inline-flex items-center justify-center text-neutral-100 uppercase font-semibold shadow-inner ${radius} ${sizeClass} ${containerClassName}`}
@@ -41,13 +48,16 @@ const Avatar: FC<AvatarProps> = ({
           className={`absolute inset-0 w-full h-full object-cover ${radius}`}
           src={url}
           alt={name}
+          // layout="fill"
+          width={width}
+          height={height}
         />
       )}
       <span className="wil-avatar__name">{name[0]}</span>
 
       {hasChecked && (
         <span
-          className={` bg-teal-500 rounded-full text-white text-xs flex items-center justify-center absolute  ${hasCheckedClass}`}
+          className={`bg-teal-500 rounded-full text-white text-xs flex items-center justify-center absolute ${hasCheckedClass}`}
         >
           <i className="las la-check"></i>
         </span>

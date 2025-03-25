@@ -66,10 +66,18 @@ export type TwMainColor =
 export interface StayDataType {
   id: string; // Corresponds to `_id`
   title: string; // Corresponds to `title`
-  state: string; // Corresponds to `state`
-  city: string; // Corresponds to `city`
+  state_name: string; // Corresponds to `state`
+  city_name: string; // Corresponds to `city`
   address:string;
   href?: Route<string>;
+  average_rating:number;
+  total_reviews :number; // Use total_reviews from data
+  stayType :string, // Use stayType from data
+  standoutAmenities : [], // Use standoutAmenities from data
+  checkin_time :string,
+  checkout_time :string,
+
+
   pincode: number; // Corresponds to `pincode`
   locationUrl: string; // Corresponds to `locationUrl`
   amenities: string[]; // Corresponds to `amenities` array

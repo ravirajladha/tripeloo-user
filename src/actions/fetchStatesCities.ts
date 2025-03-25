@@ -4,7 +4,7 @@ import axiosInstance from "@/utils/axios"; // Ensure you're using the axiosInsta
 export const fetchStatesAndCities = async () => {
   try {
 
-    const token = localStorage.getItem('accessToken'); // ✅ Get token inside the function
+    const token = localStorage.getItem('accessToken'); 
     const response = await axiosInstance.get("/api/v1/stay/getStatesAndCities", {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true, 

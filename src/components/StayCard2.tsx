@@ -23,13 +23,13 @@ const StayCard2: FC<StayCard2Props> = ({
   const {
     images = [{ url: "/placeholder-image.jpg" }], // Dummy image if not provided
     title = "Untitled Stay",
-    state = "Unknown State",
-    city = "Unknown City",
+    // state_name = "Unknown State",
+    // city_name = "Unknown City",
     price = 0,
     bedrooms = null, // Default to null if not provided
     maxGuests = null, // Default to null if not provided
     bathrooms = null, // Default to null if not provided
-    // address = `${state}, ${city}`,
+    // address = `${state_name}, ${city_name}`,
     reviewStart = null,
     reviewCount = 0,
     like = false,

@@ -113,8 +113,6 @@ const ListingStay: FC = () => {
                   ? location.city || location.state
                   : "None selected"}
             </p>
-
-
           </div>
         </div>
 
@@ -138,7 +136,7 @@ const ListingStay: FC = () => {
       <div className="nc-SectionGridFilterCard container pb-24 lg:pb-28 ">
 
         {stays.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {stays.map((stay) => (
               <StayCard2 key={stay.id} data={stay} />
             ))}

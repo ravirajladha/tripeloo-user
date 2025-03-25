@@ -1,3 +1,5 @@
+// components/StayCard.tsx
+
 import React, { FC } from "react";
 import GallerySlider from "@/components/GallerySlider";
 import { StayDataType } from "@/data/types";
@@ -6,7 +8,7 @@ import BtnLikeIcon from "@/components/BtnLikeIcon";
 import SaleOffBadge from "@/components/SaleOffBadge";
 import Badge from "@/shared/Badge";
 import Link from "next/link";
-import { Route } from 'next'; // Ensure this import matches your project's setup
+import { Route } from "next"; // Ensure this import matches your project's setup
 
 export interface StayCardProps {
   className?: string;
@@ -19,26 +21,27 @@ const StayCard: FC<StayCardProps> = ({
   className = "",
   data,
 }) => {
-  // console.log(data, "inside main stay card");
+  console.log(data, "inside main stay card");
+
   // Ensure data is not undefined or null
   const {
-    images = [{ url: "/placeholder-image.jpg" }], 
-    // Provide default placeholder image
+    images = [{ url: "/placeholder-image.jpg" }], // Provide default placeholder image
     title = "Untitled Stay",
-    state: stateProp = "Unknown State", // Avoid using `state` directly
-    city: cityProp = "Unknown City", // Avoid using `state` directly
-
+    state_name = "Unknown State",
+    city_name = "Unknown City",
     price = 0,
-    bedrooms = null, 
-    maxGuests = null,
-    bathrooms = null,
-    // address = `${stateProp}, ${cityProp}`,
-    reviewStart = 0, // Default to 0 rating
-    reviewCount = 0, // Default to 0 reviews
+    adults = 0,
+    children = 0,
+    average_rating = 0, // Use average_rating from data
+    total_reviews = 0, // Use total_reviews from data
+    stayType = "Unknown Stay Type", // Use stayType from data
+    amenities = [], // Use amenities from data
+    standoutAmenities = [], // Use standoutAmenities from data
+    checkin_time = "N/A",
+    checkout_time = "N/A",
     like = false, // Default to not liked
     saleOff = null, // Default to no sale
     isAds = null,
-
     id,
   } = data || {};
 
@@ -49,10 +52,9 @@ const StayCard: FC<StayCardProps> = ({
           uniqueID={`StayCard_${id}`}
           ratioClass="aspect-w-12 aspect-h-11"
           galleryImgs={images.map((img) => img.url)}
-          
           imageClass="rounded-lg"
           href={`/listing-stay-detail/${id}` as Route<string>} // Explicitly cast the string to Route<string>
-          />
+        />
         <BtnLikeIcon isLiked={like || false} className="absolute right-3 top-3 z-[1]" />
         {saleOff && <SaleOffBadge className="absolute left-3 top-3" />}
       </div>
@@ -63,10 +65,6 @@ const StayCard: FC<StayCardProps> = ({
     return (
       <div className={size === "default" ? "mt-3 space-y-3" : "mt-2 space-y-2"}>
         <div className="space-y-2">
-          {/* <span className="text-sm text-neutral-500 dark:text-neutral-400">
-            {bedrooms ? `${bedrooms} bedrooms` : "No bedrooms info"} ·{" "}
-            {bathrooms ? `${bathrooms} bathrooms` : "No bathrooms info"}
-          </span> */}
           <div className="flex items-center space-x-2">
             {isAds && <Badge name="ADS" color="green" />}
             <h2
@@ -99,8 +97,31 @@ const StayCard: FC<StayCardProps> = ({
                 />
               </svg>
             )}
-            <span className="">{"state static"}</span>
+            <span className="">{`${city_name}, ${state_name}`}</span>
           </div>
+          <div className="text-sm text-neutral-500 dark:text-neutral-400">
+            <span>{stayType}</span>
+          </div>
+          <div className="text-sm text-neutral-500 dark:text-neutral-400">
+            <span>
+              Guests: {adults} Adults, {children} Children
+            </span>
+          </div>
+          <div className="text-sm text-neutral-500 dark:text-neutral-400">
+            <span>
+              Check-in: {checkin_time} | Check-out: {checkout_time}
+            </span>
+          </div>
+          {amenities.length > 0 && (
+            <div className="text-sm text-neutral-500 dark:text-neutral-400">
+              <span>Amenities: {amenities.join(", ")}</span>
+            </div>
+          )}
+          {standoutAmenities.length > 0 && (
+            <div className="text-sm text-neutral-500 dark:text-neutral-400">
+              <span>Standout Amenities: {standoutAmenities.join(", ")}</span>
+            </div>
+          )}
         </div>
         <div className="w-14 border-b border-neutral-100 dark:border-neutral-800"></div>
         <div className="flex justify-between items-center">
@@ -113,10 +134,11 @@ const StayCard: FC<StayCardProps> = ({
               </span>
             )}
           </span>
-          {/* {!!reviewStart && (
-            // <StartRating reviewCount={reviewCount || 0} point={reviewStart} />
-          )} */}
-           <StartRating reviewCount={3} point={3}/>
+          <StartRating
+            point={average_rating}
+            reviewCount={total_reviews}
+            className="text-sm"
+          />
         </div>
       </div>
     );

@@ -24,11 +24,27 @@ export interface SectionSliderNewCategoriesProps {
   sliderStyle?: "style1" | "style2";
 }
 // href: "/listing-stay-map",
+
+
+// 'Standard rooms', 
+// 'Suites', 
+// 'Deluxe rooms', 
+// 'Villas', 
+// 'Bungalows', 
+// 'Overwater bungalows', 
+// 'Homestay', 
+// 'Cottage', 
+// 'Apartment', 
+// 'Farmhouse', 
+// 'Camp', 
+// 'Beach hut'
+
+
 const DEMO_CATS: TaxonomyType[] = [
   {
     id: "1",
     href: "#",
-    name: "Nature House",
+    name: "Standard Rooms",
     taxonomy: "category",
     count: 17288,
     thumbnail:
@@ -37,7 +53,7 @@ const DEMO_CATS: TaxonomyType[] = [
   {
     id: "2",
     href: "/#",
-    name: "Wooden house",
+    name: "Homestay",
     taxonomy: "category",
     count: 2118,
     thumbnail:
@@ -46,7 +62,7 @@ const DEMO_CATS: TaxonomyType[] = [
   {
     id: "3",
     href: "/#",
-    name: "Houseboat",
+    name: "Beach Hut",
     taxonomy: "category",
     count: 36612,
     thumbnail:
@@ -91,7 +107,7 @@ const DEMO_CATS: TaxonomyType[] = [
   {
     id: "8",
     href: "/#",
-    name: "Wooden Dome",
+    name: "Villas",
     taxonomy: "category",
     count: 515,
     thumbnail:

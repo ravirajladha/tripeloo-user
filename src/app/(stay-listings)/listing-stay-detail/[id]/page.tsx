@@ -5,10 +5,14 @@ import { Dialog, Transition, TransitionChild } from '@headlessui/react'
 import { ArrowRightIcon, Squares2X2Icon } from '@heroicons/react/24/outline'
 import CommentListing from '@/components/CommentListing'
 import FiveStartIconForRate from '@/components/FiveStartIconForRate'
-import StartRating from '@/components/StartRating'
+import StartRating from '@/components/StartRating';
+import ReviewModal from '@/components/ReviewModal'; // Import the new Modal component
+import StarRatingInput from '@/components/StartRatingInput'; // Import the new component
 import Avatar from '@/shared/Avatar'
 import Badge from '@/shared/Badge'
 import { useCallback } from "react";
+import axios from 'axios';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 import ButtonCircle from '@/shared/ButtonCircle'
 import ButtonPrimary from '@/shared/ButtonPrimary'
@@ -23,6 +27,9 @@ import StayDatesRangeInput from './StayDatesRangeInput'
 import GuestsInput from './GuestsInput'
 import SectionDateRange from './SectionDateRange'
 import RoomTypeCard from "./roomTypeCard";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store/store'; // Adjust based on your Redux store setup
+import { handleProtectedNavigation } from "@/utils/handleProtectedNavigation";
 
 import { Route } from 'next'
 
@@ -35,10 +42,50 @@ export interface ListingStayDetailPageProps {
 	id: string;
 }
 
+const amenityIcons: { [key: string]: string } = {
+	// Standard Amenities
+	WiFi: "las la-wifi",
+	TV: "las la-tv",
+	Kitchen: "las la-utensils",
+	"Washing machine": "las la-water",
+	"Free parking on premises": "las la-parking",
+	"Paid parking on premises": "las la-parking",
+	"Air conditioning": "las la-snowflake",
+	"Dedicated workspace": "las la-briefcase",
+
+	// Standout Amenities
+	Pool: "las la-swimming-pool",
+	"Hot tub": "las la-hot-tub",
+	Patio: "las la-chair",
+	"BBQ grill": "las la-fire",
+	"Outdoor dining area": "las la-utensils",
+	Firepit: "las la-fire",
+	"Pool table": "las la-gamepad",
+	"Indoor fireplace": "las la-fire",
+	Piano: "las la-music",
+	"Exercise equipment": "las la-dumbbell",
+	"Lake access": "las la-water",
+	"Beach access": "las la-umbrella-beach",
+	"Ski-in/out": "las la-skiing",
+	"Outdoor shower": "las la-shower",
+
+	// Safety Items
+	"Smoke alarm": "las la-bell",
+	"First aid kit": "las la-first-aid",
+	"Fire extinguisher": "las la-fire-extinguisher",
+	"Carbon monoxide alarm": "las la-bell",
+};
+
+const fallbackIcon = "las la-check-circle";
+
 const ListingStayDetailPage: FC = () => {
 	const params = useParams();
 	const id = Array.isArray(params?.id) ? params.id[0] : params.id; // Ensure `id` is a string
 	const router = useRouter();
+	const dispatch = useDispatch();
+	const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+	const user = useSelector((state: RootState) => state.auth.user);
+	console.log(user, "user details from the page/id , single stay");
 	const [stay, setStay] = useState<any>(null); // State to store stay details
 	// setRoomType
 	const [roomTypes, setRoomTypes] = useState<any[]>([]);
@@ -54,10 +101,18 @@ const ListingStayDetailPage: FC = () => {
 
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const [reviewText, setReviewText] = useState<string>("");
+	const [reviewRating, setReviewRating] = useState<number>(0);
+	const [reviews, setReviews] = useState<any[]>([]);
+	const [pagination, setPagination] = useState<any>({});
+	const [overallRating, setOverallRating] = useState<{ average_rating: number; total_reviews: number }>({ average_rating: 0, total_reviews: 0 });
+	const [currentPage, setCurrentPage] = useState(1);
+	const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+	const [modalTitle, setModalTitle] = useState(""); // State for modal title
+	const [modalMessage, setModalMessage] = useState("");
 
-	let [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false)
-
-	const thisPathname = usePathname()
+	let [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
+	const thisPathname = usePathname();
 
 	function closeModalAmenities() {
 		setIsOpenModalAmenities(false)
@@ -85,11 +140,10 @@ const ListingStayDetailPage: FC = () => {
 		if (!id) return;
 
 		// Fetch stay details
-		const fetchStayDetails = async () => {
+		const fetchStayDetails = async (page = 1) => {
 			try {
 				setLoading(true);
-				const data = await getStayById(id); // Fetch data
-				console.log(data, "data inside single card");
+				const data = await getStayById(id, { page }); // Pass the page parameter				console.log(data, "data inside single card");
 
 				setStay(data.stay); // Set stay details
 				const fetchedRoomTypes = data.roomTypes || []; // Fallback to empty array
@@ -101,6 +155,10 @@ const ListingStayDetailPage: FC = () => {
 
 					// Default to the first room type
 				}
+
+				setReviews(data.reviews.data || []);
+				setPagination(data.reviews.pagination || {});
+				setOverallRating(data.overallRating || { average_rating: 0, total_reviews: 0 });
 
 				console.log(fetchedRoomTypes, "room types details");
 				setLoading(false);
@@ -167,13 +225,80 @@ const ListingStayDetailPage: FC = () => {
 	};
 
 
+	const handleSubmitReview = async (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		if (!isAuthenticated) {
+			handleProtectedNavigation(null, isAuthenticated, router, "/login", dispatch);
+			return;
+		}
+
+		if (!reviewText.trim()) {
+			alert("Please enter a review comment before submitting.");
+			return;
+		}
+
+		if (reviewRating < 1 || reviewRating > 5) {
+			alert("Please select a rating between 1 and 5 stars.");
+			return;
+		}
+		const token = localStorage.getItem("accessToken");
+		try {
+			const response = await axios.post(
+				`${BACKEND_URL}/api/v1/stay/createReview`,
+				{
+					stay_id: id,
+					comment: reviewText,
+					rating: reviewRating,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`, // Assuming the token is stored in the user object
+					},
+				}
+			);
+
+			if (response.data.success) {
+				// Refresh the reviews and overall rating
+				const data = await getStayById(id, { page: 1 });
+				setReviews(data.reviews.data || []);
+				setPagination(data.reviews.pagination || {});
+				setOverallRating(data.overallRating || { average_rating: 0, total_reviews: 0 });
+
+				// Reset the form
+				setReviewText("");
+				setReviewRating(0);
+				setCurrentPage(1);
+
+				// Show success modal
+				setModalTitle("Success");
+				setModalMessage("Review submitted successfully!");
+				setIsModalOpen(true);
+			} else {
+				throw new Error(response.data.message || "Failed to submit review");
+			}
+		} catch (error: any) {
+			const errorMessage =
+				error.response?.data?.message || // Check for backend message
+				error.message || // Fallback to generic axios error message
+				"Failed to submit review"; // Fallback to default message
+
+			setModalTitle("Review Submission Error");
+			setModalMessage(errorMessage);
+			setIsModalOpen(true);
+		}
+	};
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
 	const renderSection1 = () => {
 		return (
 			<div className="listingSection__wrap !space-y-6">
 				{/* 1 */}
 				<div className="flex items-center justify-between">
-					<Badge name="Wooden house" />
-					<LikeSaveBtns />
+					<Badge name=	{stay.stayType} />
+					{/* <LikeSaveBtns /> */}
 				</div>
 
 				{/* 2 */}
@@ -183,55 +308,65 @@ const ListingStayDetailPage: FC = () => {
 
 				{/* 3 */}
 				<div className="flex items-center space-x-4">
-					<StartRating />
-					<span>·</span>
-					<span>
-						<i className="las la-map-marker-alt"></i>
-						<span className="ml-1">{stay.city}</span>
-					</span>
-				</div>
-
+				<StartRating
+          point={overallRating.average_rating}
+          reviewCount={overallRating.total_reviews}
+        />        <span>·</span>
+        <span>
+          {overallRating.total_reviews} {overallRating.total_reviews === 1 ? "review" : "reviews"}
+        </span>
+        <span>·</span>
+        <span>
+          <i className="las la-map-marker-alt"></i>
+          <span className="ml-1">{stay.city_name}</span> {/* Use city_name instead of city */}
+        </span>
+      </div>
 				{/* 4 */}
 				<div className="flex items-center">
-					<Avatar hasChecked sizeClass="h-10 w-10" radius="rounded-full" />
-					<span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
-						Hosted by{' '}
-						<span className="font-medium text-neutral-900 dark:text-neutral-200">
-							fake
-						</span>
-					</span>
-				</div>
+        <Avatar hasChecked sizeClass="h-10 w-10" radius="rounded-full" />
+        <span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
+          Hosted by{' '}
+          <span className="font-medium text-neutral-900 dark:text-neutral-200">
+            {stay.host_information.vendor_id.fullName}
+          </span>
+        </span>
+      </div>
 
 				{/* 5 */}
 				<div className="w-full border-b border-neutral-100 dark:border-neutral-700" />
 
 				{/* 6 */}
 				<div className="flex items-center justify-between space-x-8 text-sm text-neutral-700 dark:text-neutral-300 xl:justify-start xl:space-x-12">
-					<div className="flex items-center space-x-3">
-						<i className="las la-user text-2xl"></i>
-						<span className="">
-							6 <span className="hidden sm:inline-block">guests</span>
-						</span>
-					</div>
-					<div className="flex items-center space-x-3">
-						<i className="las la-bed text-2xl"></i>
-						<span className=" ">
-							6 <span className="hidden sm:inline-block">beds</span>
-						</span>
-					</div>
-					<div className="flex items-center space-x-3">
-						<i className="las la-bath text-2xl"></i>
-						<span className=" ">
-							3 <span className="hidden sm:inline-block">baths</span>
-						</span>
-					</div>
-					<div className="flex items-center space-x-3">
-						<i className="las la-door-open text-2xl"></i>
-						<span className=" ">
-							2 <span className="hidden sm:inline-block">bedrooms</span>
-						</span>
-					</div>
-				</div>
+        <div className="flex items-center space-x-3">
+          <i className="las la-user text-2xl"></i>
+          <span className="">
+            {selectedRoomType?.guests || 0}{' '}
+            <span className="hidden sm:inline-block">guests</span>
+          </span>
+        </div>
+        <div className="flex items-center space-x-3">
+          <i className="las la-bed text-2xl"></i>
+          <span className="">
+            {selectedRoomType?.beds || 0}{' '}
+            <span className="hidden sm:inline-block">beds</span>
+          </span>
+        </div>
+        <div className="flex items-center space-x-3">
+          <i className="las la-bath text-2xl"></i>
+          <span className="">
+            {selectedRoomType?.baths || 0}{' '}
+            <span className="hidden sm:inline-block">baths</span>
+          </span>
+        </div>
+        <div className="flex items-center space-x-3">
+          <i className="las la-door-open text-2xl"></i>
+          <span className="">
+            {selectedRoomType?.bedrooms || 0}{' '}
+            <span className="hidden sm:inline-block">bedrooms</span>
+          </span>
+        </div>
+      </div>
+    {/* </div> */}
 			</div>
 		)
 	}
@@ -297,108 +432,105 @@ const ListingStayDetailPage: FC = () => {
 	}
 
 	const renderSection3 = () => {
+		// Combine all amenities into a single array with their category for display
+		const allAmenities = [
+			...stay.amenities.map((item: string) => ({ name: item, category: "Standard Amenities" })),
+			...stay.standoutAmenities.map((item: string) => ({ name: item, category: "Standout Amenities" })),
+			...stay.safetyItems.map((item: string) => ({ name: item, category: "Safety Items" })),
+		];
+
+		// Limit the number of amenities shown initially
+		const visibleAmenities = allAmenities.slice(0, 12);
+		const hasMoreAmenities = allAmenities.length > 12;
+
 		return (
 			<div className="listingSection__wrap">
 				<div>
-					<h2 className="text-2xl font-semibold">Amenities </h2>
+					<h2 className="text-2xl font-semibold">Amenities</h2>
 					<span className="mt-2 block text-neutral-500 dark:text-neutral-400">
-						{` About the property's amenities and services`}
+						{`About the property's amenities and services`}
 					</span>
 				</div>
 				<div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
-				{/* 6 */}
+				{/* Display Amenities */}
 				<div className="grid grid-cols-1 gap-6 text-sm text-neutral-700 dark:text-neutral-300 xl:grid-cols-3">
-					{Amenities_demos.filter((_, i) => i < 12).map((item) => (
-						<div key={item.name} className="flex items-center space-x-3">
-							<i className={`las text-3xl ${item.icon}`}></i>
-							<span className=" ">{item.name}</span>
+					{visibleAmenities.map((item, index) => (
+						<div key={index} className="flex items-center space-x-3">
+							<i className={`${amenityIcons[item.name] || fallbackIcon} text-3xl`}></i>
+							<span>{item.name}</span>
 						</div>
 					))}
 				</div>
 
-				{/* ----- */}
-				<div className="w-14 border-b border-neutral-200"></div>
-				<div>
-					<ButtonSecondary onClick={openModalAmenities}>
-						View more 20 amenities
-					</ButtonSecondary>
-				</div>
-				{renderMotalAmenities()}
+				{/* Show "View more" button if there are more amenities */}
+				{hasMoreAmenities && (
+					<>
+						<div className="w-14 border-b border-neutral-200"></div>
+						<div>
+							<ButtonSecondary onClick={openModalAmenities}>
+								View more {allAmenities.length - 12} amenities
+							</ButtonSecondary>
+						</div>
+					</>
+				)}
+				{renderMotalAmenities(allAmenities)}
 			</div>
-		)
-	}
+		);
+	};
 
-	const renderMotalAmenities = () => {
+	const renderMotalAmenities = (allAmenities: { name: string; category: string }[]) => {
 		return (
 			<Transition appear show={isOpenModalAmenities} as={Fragment}>
-				<Dialog
-					as="div"
-					className="fixed inset-0 z-50 overflow-y-auto"
-					onClose={closeModalAmenities}
-				>
-					<div className="min-h-screen px-4 text-center">
-						<TransitionChild
-							as={Fragment}
-							enter="ease-out duration-300"
-							enterFrom="opacity-0"
-							enterTo="opacity-100"
-							leave="ease-in duration-200"
-							leaveFrom="opacity-100"
-							leaveTo="opacity-0"
-						>
-							<div className="fixed inset-0 bg-black bg-opacity-40" />
-						</TransitionChild>
+				<Dialog as="div" className="relative z-50" onClose={closeModalAmenities}>
+					<TransitionChild
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-black bg-opacity-40" />
+					</TransitionChild>
 
-						{/* This element is to trick the browser into centering the modal contents. */}
-						<span
-							className="inline-block h-screen align-middle"
-							aria-hidden="true"
-						>
-							&#8203;
-						</span>
-						<TransitionChild
-							as={Fragment}
-							enter="ease-out duration-300"
-							enterFrom="opacity-0 scale-95"
-							enterTo="opacity-100 scale-100"
-							leave="ease-in duration-200"
-							leaveFrom="opacity-100 scale-100"
-							leaveTo="opacity-0 scale-95"
-						>
-							<div className="inline-block h-screen w-full max-w-4xl py-8">
-								<div className="inline-flex h-full w-full transform flex-col overflow-hidden rounded-2xl bg-white pb-2 text-left align-middle shadow-xl transition-all dark:border dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100">
-									<div className="relative flex-shrink-0 border-b border-neutral-200 px-6 py-4 text-center dark:border-neutral-800">
-										<h3
-											className="text-lg font-medium leading-6 text-gray-900"
-											id="headlessui-dialog-title-70"
-										>
-											Amenities
-										</h3>
-										<span className="absolute left-3 top-3">
-											<ButtonClose onClick={closeModalAmenities} />
-										</span>
+					<div className="fixed inset-0 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<TransitionChild
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 scale-95"
+								enterTo="opacity-100 scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 scale-100"
+								leaveTo="opacity-0 scale-95"
+							>
+								<div className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-neutral-900">
+									<div className="relative flex items-center justify-between border-b border-neutral-200 pb-4 dark:border-neutral-700">
+										<h3 className="text-lg font-semibold">All Amenities</h3>
+										<ButtonClose onClick={closeModalAmenities} />
 									</div>
-									<div className="divide-y divide-neutral-200 overflow-auto px-8 text-neutral-700 dark:text-neutral-300">
-										{Amenities_demos.filter((_, i) => i < 1212).map((item) => (
-											<div
-												key={item.name}
-												className="flex items-center space-x-5 py-2.5 sm:py-4 lg:space-x-8 lg:py-5"
-											>
-												<i
-													className={`las text-4xl text-neutral-6000 ${item.icon}`}
-												></i>
-												<span>{item.name}</span>
+									<div className="mt-6 grid grid-cols-1 gap-6 text-sm text-neutral-700 dark:text-neutral-300 sm:grid-cols-2 lg:grid-cols-3">
+										{allAmenities.map((item, index) => (
+											<div key={index} className="flex items-center space-x-3">
+												<i className={`${amenityIcons[item.name] || fallbackIcon} text-3xl`}></i>
+												<div>
+													<span>{item.name}</span>
+													<p className="text-xs text-neutral-500 dark:text-neutral-400">
+														{item.category}
+													</p>
+												</div>
 											</div>
 										))}
 									</div>
 								</div>
-							</div>
-						</TransitionChild>
+							</TransitionChild>
+						</div>
 					</div>
 				</Dialog>
 			</Transition>
-		)
-	}
+		);
+	};
 
 	const renderSection4 = () => {
 		return (
@@ -461,12 +593,20 @@ const ListingStayDetailPage: FC = () => {
 					/>
 					<div>
 						<a className="block text-xl font-medium" href="##">
-
+						<div className="flex items-center">
+        {/* <Avatar hasChecked sizeClass="h-10 w-10" radius="rounded-full" /> */}
+        <span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
+          Hosted by{' '}
+          <span className="font-medium text-neutral-900 dark:text-neutral-200">
+            {stay.host_information.vendor_id.fullName}
+          </span>
+        </span>
+      </div>
 						</a>
 						<div className="mt-1.5 flex items-center text-sm text-neutral-500 dark:text-neutral-400">
-							<StartRating />
+							{/* <StartRating /> */}
 							<span className="mx-2">·</span>
-							<span> 12 places</span>
+							<span> More than 3 places</span>
 						</div>
 					</div>
 				</div>
@@ -548,41 +688,98 @@ const ListingStayDetailPage: FC = () => {
 		return (
 			<div className="listingSection__wrap">
 				{/* HEADING */}
-				<h2 className="text-2xl font-semibold">Reviews (23 reviews)</h2>
+				<h2 className="text-2xl font-semibold">
+					Reviews ({overallRating.total_reviews} {overallRating.total_reviews === 1 ? "review" : "reviews"})
+				</h2>
 				<div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
 
 				{/* Content */}
 				<div className="space-y-5">
-					<FiveStartIconForRate iconClass="w-6 h-6" className="space-x-0.5" />
-					<div className="relative">
-						<Input
-							fontClass=""
-							sizeClass="h-16 px-4 py-3"
-							rounded="rounded-3xl"
-							placeholder="Share your thoughts ..."
-						/>
-						<ButtonCircle
-							className="absolute right-2 top-1/2 -translate-y-1/2 transform"
-							size=" w-12 h-12 "
-						>
-							<ArrowRightIcon className="h-5 w-5" />
-						</ButtonCircle>
+					{/* <FiveStartIconForRate
+				iconClass="w-6 h-6"
+				className="space-x-0.5"
+				rating={overallRating.average_rating}
+			  /> */}
+					<div className="space-y-3">
+						{isAuthenticated && (
+							<>
+								<StarRatingInput
+									onChange={(value) => setReviewRating(value)}
+									initialRating={reviewRating}
+								/>
+								<div className="relative">
+									<Input
+										fontClass=""
+										sizeClass="h-16 px-4 py-3"
+										rounded="rounded-3xl"
+										placeholder="Share your thoughts ..."
+										value={reviewText}
+										onChange={(e) => setReviewText(e.target.value)}
+									/>
+									<ButtonCircle
+										className="absolute right-2 top-1/2 -translate-y-1/2 transform"
+										size=" w-12 h-12 "
+										onClick={handleSubmitReview}
+									>
+										<ArrowRightIcon className="h-5 w-5" />
+									</ButtonCircle>
+								</div>
+							</>
+						)}
+						{!isAuthenticated && (
+							<p className="text-sm text-neutral-500 dark:text-neutral-400">
+								<a
+									href="/login"
+									className="text-blue-600 hover:underline"
+									onClick={(e) => {
+										handleProtectedNavigation(e, isAuthenticated, router, "/login", dispatch);
+									}}
+								>
+									Log in
+								</a>{" "}
+								to share your thoughts about this stay.
+							</p>
+						)}
 					</div>
 				</div>
 
-				{/* comment */}
+				{/* Comment */}
 				<div className="divide-y divide-neutral-100 dark:divide-neutral-800">
-					<CommentListing className="py-8" />
-					<CommentListing className="py-8" />
-					<CommentListing className="py-8" />
-					<CommentListing className="py-8" />
-					<div className="pt-8">
-						<ButtonSecondary>View more 20 reviews</ButtonSecondary>
-					</div>
+					{reviews.length === 0 ? (
+						<p className="py-8 text-neutral-500 dark:text-neutral-400">
+							No reviews yet. Be the first to share your experience!
+						</p>
+					) : (
+						reviews.map((review) => (
+							<CommentListing
+								key={review._id}
+								className="py-8"
+								data={{
+									name: review.user_name,
+									date: new Date(review.createdAt).toLocaleDateString(),
+									comment: review.comment,
+									starPoint: review.rating,
+								}}
+							/>
+						))
+					)}
+					{pagination.totalPages > 1 && (
+						<div className="pt-8 flex justify-center space-x-2">
+							{Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
+								<ButtonSecondary
+									key={page}
+									onClick={() => handlePageChange(page)}
+									className={currentPage === page ? "bg-neutral-200 dark:bg-neutral-700" : ""}
+								>
+									{page}
+								</ButtonSecondary>
+							))}
+						</div>
+					)}
 				</div>
 			</div>
-		)
-	}
+		);
+	};
 	//map location render
 	const renderSection7 = () => {
 		return (
@@ -722,7 +919,10 @@ const ListingStayDetailPage: FC = () => {
 							/night
 						</span>
 					</span>
-					<StartRating />
+					<StartRating
+          point={overallRating.average_rating}
+          reviewCount={overallRating.total_reviews}
+        />   
 				</div>
 
 				{/* FORM */}
@@ -764,7 +964,7 @@ const ListingStayDetailPage: FC = () => {
 		<div className="nc-ListingStayDetailPage">
 			{/*  HEADER */}
 			<header className="rounded-md sm:rounded-xl">
-				<div className="relative grid grid-cols-3 gap-1 sm:grid-cols-4 sm:gap-2">
+				<div className="relative grid grid-cols-3 gap-1 sm:grid-cols-4 sm:gap-2 mt-8">
 					{/* Main image */}
 					{stay.images && stay.images.length > 0 ? (
 						<div
@@ -830,6 +1030,14 @@ const ListingStayDetailPage: FC = () => {
 					{renderSection1()}
 					{renderSectionA()}
 					{/* <SectionDateRange availability={availability} /> */}
+
+					<ReviewModal
+						isOpen={isModalOpen}
+						onClose={() => setIsModalOpen(false)}
+						title={modalTitle}
+						message={modalMessage}
+					/>
+
 
 					<SectionDateRange
 						availability={availability}
