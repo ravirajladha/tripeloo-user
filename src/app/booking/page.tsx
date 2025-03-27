@@ -65,8 +65,20 @@ const AuthorPage: FC<AuthorPageProps> = ({ }) => {
 
     const fetchBookings = async () => {
       try {
+
+
+
+
+     
+        // const response = await axiosInstance.get("/api/v1/stay/getStatesAndCities", {
+        //   headers: { Authorization: `Bearer ${token}` },
+        //   withCredentials: true, 
+        
+        // });
+        const token = localStorage.getItem('accessToken'); 
         const response = await axios.get(`${BACKEND_URL}/api/v1/booking/user/${user._id}`, {
-          withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true, 
         });
         console.log(response.data.data, "bookings data")
         setBookings(response.data.data);
